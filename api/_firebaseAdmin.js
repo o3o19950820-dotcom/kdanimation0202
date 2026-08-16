@@ -5,6 +5,25 @@ import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 let cachedServices = null;
 
 function readEnv() {
+  const rawJson = String(process.env.FIREBASE_SERVICE_ACCOUNT_JSON || '').trim();
+
+  if (rawJson) {
+    try {
+      const serviceAccount = JSON.parse(rawJson);
+
+      return {
+        projectId: String(serviceAccount.project_id || serviceAccount.projectId || '').trim(),
+        clientEmail: String(serviceAccount.client_email || serviceAccount.clientEmail || '').trim(),
+        privateKey: String(serviceAccount.private_key || serviceAccount.privateKey || '').replace(/\\n/g, '\n').trim(),
+      };
+    } catch {
+      const error = new Error('FIREBASE_SERVICE_ACCOUNT_JSON 형식이 올바른 JSON이 아닙니다.');
+      error.code = 'FIREBASE_SERVICE_ACCOUNT_JSON_INVALID';
+      error.status = 503;
+      throw error;
+    }
+  }
+
   return {
     projectId: String(process.env.FIREBASE_PROJECT_ID || '').trim(),
     clientEmail: String(process.env.FIREBASE_CLIENT_EMAIL || '').trim(),
@@ -13,8 +32,12 @@ function readEnv() {
 }
 
 export function isAdminConfigured() {
-  const { projectId, clientEmail, privateKey } = readEnv();
-  return Boolean(projectId && clientEmail && privateKey);
+  try {
+    const { projectId, clientEmail, privateKey } = readEnv();
+    return Boolean(projectId && clientEmail && privateKey);
+  } catch {
+    return false;
+  }
 }
 
 export function getAdminServices() {
