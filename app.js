@@ -1,4 +1,4 @@
-import { db, collection, doc, getDoc, setDoc, onSnapshot, query, orderBy } from './firebase.js';
+import { db, doc, onSnapshot } from './firebase.js';
 
 export const $ = (id)=>document.getElementById(id);
 export const cats = {cut:'커트',perm:'펌',color:'컬러',care:'케어'};
@@ -28,38 +28,77 @@ export const defaults = {
     {cat:'care', title:'클리닉 주기', body:'손상 정도에 따라 2~4주 간격으로 관리하면 모발 컨디션 유지에 도움이 됩니다.'}
   ],
   blogLinks:[{title:'네이버 블로그 글을 연결해 주세요', url:'https://blog.naver.com/'}],
-  faqs:[{q:'예약은 어떻게 하나요?', a:'네이버예약 또는 전화로 가능합니다.'},{q:'첫 방문 상담 가능한가요?', a:'가능합니다. 원하는 스타일 사진을 가져오시면 상담이 더 정확합니다.'}]
+  faqs:[
+    {q:'예약은 어떻게 하나요?', a:'네이버예약 또는 전화로 가능합니다.'},
+    {q:'첫 방문 상담 가능한가요?', a:'가능합니다. 원하는 스타일 사진을 가져오시면 상담이 더 정확합니다.'}
+  ]
 };
 
-export async function ensureDoc(name, data){const ref=doc(db,'site',name); const snap=await getDoc(ref); if(!snap.exists()) await setDoc(ref,{items:data, updatedAt:Date.now()});}
-export async function ensureSite(){await ensureDoc('settings', defaults.site); await ensureDoc('designers', defaults.designers); await ensureDoc('events', defaults.events); await ensureDoc('styles', defaults.styles); await ensureDoc('tips', defaults.tips); await ensureDoc('blogLinks', defaults.blogLinks); await ensureDoc('faqs', defaults.faqs);}
-export function toast(t){const el=$('toast'); el.textContent=t; el.style.display='block'; setTimeout(()=>el.style.display='none',2200)}
-export function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-export function imageBox(src, alt){return src?`<img src="${esc(src)}" alt="${esc(alt)}">`:'JUNO';}
+export function toast(t){
+  const el=$('toast');
+  if(!el) return;
+  el.textContent=t;
+  el.style.display='block';
+  setTimeout(()=>el.style.display='none',2200);
+}
+
+export function esc(s=''){
+  return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+export function imageBox(src, alt){
+  return src?`<img src="${esc(src)}" alt="${esc(alt)}">`:'JUNO';
+}
 
 let activeStyle='cut', activeTip='cut';
-let state={...defaults};
+let state=JSON.parse(JSON.stringify(defaults));
 
 function render(){
-  $('reserveTop').href=state.site.reserveUrl||'#'; $('blogHome').href=state.site.blogUrl||'#';
-  $('eventList').innerHTML=(state.events||[]).map(x=>`<article class="item"><div class="photo">${imageBox(x.image,x.title)}</div><div class="body"><h3>${esc(x.title)}</h3><p>${esc(x.desc)}</p>${x.link?`<a class="btn light" target="_blank" href="${esc(x.link)}">자세히 보기</a>`:''}</div></article>`).join('')||'<p>등록된 이벤트가 없습니다.</p>';
+  $('reserveTop').href=state.site.reserveUrl||'#';
+  $('blogHome').href=state.site.blogUrl||'#';
+
+  $('eventList').innerHTML=(state.events||[]).map(x=>`<article class="item"><div class="photo">${imageBox(x.image,x.title)}</div><div class="body"><h3>${esc(x.title)}</h3><p>${esc(x.desc)}</p>${x.link?`<a class="btn light" target="_blank" rel="noopener" href="${esc(x.link)}">자세히 보기</a>`:''}</div></article>`).join('')||'<p>등록된 이벤트가 없습니다.</p>';
+
   $('designerList').innerHTML=(state.designers||[]).map(d=>`<article class="designer"><div class="photo">${imageBox(d.photo,d.name)}</div><div class="body"><h3>${esc(d.name)}</h3><p>${esc(d.position)}</p><span class="tag">${esc(d.keyword)}</span><p>${esc(d.intro)}</p></div></article>`).join('');
-  $('styleList').innerHTML=(state.styles||[]).filter(x=>x.cat===activeStyle).map(x=>`<article class="item"><div class="photo">${imageBox(x.image,x.title)}</div><div class="body"><h3>${esc(x.title)}</h3><p>${esc(x.desc)}</p><span class="tag">${cats[x.cat]}</span></div></article>`).join('')||'<p>등록된 스타일이 없습니다.</p>';
-  $('tipList').innerHTML=(state.tips||[]).filter(x=>x.cat===activeTip).map(x=>`<article class="card"><h3>${esc(x.title)}</h3><p>${esc(x.body)}</p><span class="tag">${cats[x.cat]}</span></article>`).join('')||'<p>등록된 헤어TIP이 없습니다.</p>';
+
+  $('styleList').innerHTML=(state.styles||[]).filter(x=>x.cat===activeStyle).map(x=>`<article class="item"><div class="photo">${imageBox(x.image,x.title)}</div><div class="body"><h3>${esc(x.title)}</h3><p>${esc(x.desc)}</p><span class="tag">${cats[x.cat]||''}</span></div></article>`).join('')||'<p>등록된 스타일이 없습니다.</p>';
+
+  $('tipList').innerHTML=(state.tips||[]).filter(x=>x.cat===activeTip).map(x=>`<article class="card"><h3>${esc(x.title)}</h3><p>${esc(x.body)}</p><span class="tag">${cats[x.cat]||''}</span></article>`).join('')||'<p>등록된 헤어TIP이 없습니다.</p>';
+
   $('blogLinks').innerHTML=(state.blogLinks||[]).map(x=>`<a target="_blank" rel="noopener" href="${esc(x.url)}">${esc(x.title)}</a>`).join('');
   $('faqList').innerHTML=(state.faqs||[]).map(x=>`<details><summary>${esc(x.q)}</summary><p>${esc(x.a)}</p></details>`).join('');
 }
 
-ensureSite().then(()=>{
-  ['settings','designers','events','styles','tips','blogLinks','faqs'].forEach(name=>{
-    onSnapshot(doc(db,'site',name),snap=>{if(snap.exists()){const v=snap.data().items; state[name==='settings'?'site':name]=v; render(); window.__JUNO_STATE__=state;}});
-  });
-}).catch(err=>{console.error(err); toast('Firebase 설정/규칙을 확인해줘'); render();});
+['settings','designers','events','styles','tips','blogLinks','faqs'].forEach(name=>{
+  onSnapshot(
+    doc(db,'site',name),
+    snap=>{
+      if(snap.exists()){
+        const v=snap.data().items;
+        state[name==='settings'?'site':name]=v;
+        render();
+        window.__JUNO_STATE__=state;
+      }
+    },
+    err=>{
+      console.error('Firestore read error:', name, err);
+    }
+  );
+});
 
-document.querySelectorAll('.tabs').forEach(tab=>tab.addEventListener('click',e=>{if(e.target.tagName!=='BUTTON')return; tab.querySelectorAll('button').forEach(b=>b.classList.remove('on')); e.target.classList.add('on'); if(tab.dataset.target==='style')activeStyle=e.target.dataset.cat; else activeTip=e.target.dataset.cat; render();}));
+render();
 
-window.__JUNO_DEFAULTS__=defaults; window.__JUNO_RENDER__=render; window.__JUNO_STATE__=state;
+document.querySelectorAll('.tabs[data-target]').forEach(tab=>tab.addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  tab.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+  e.target.classList.add('on');
+  if(tab.dataset.target==='style')activeStyle=e.target.dataset.cat;
+  else activeTip=e.target.dataset.cat;
+  render();
+}));
 
+window.__JUNO_DEFAULTS__=defaults;
+window.__JUNO_RENDER__=render;
+window.__JUNO_STATE__=state;
 
 // ===== Motion effects =====
 const revealObserver = new IntersectionObserver((entries)=>{
