@@ -10,6 +10,15 @@
     '백건': '/designer-baekgeon.html'
   };
 
+  function loadDesignerAdminEditor() {
+    if (document.querySelector('script[data-designer-detail-admin]')) return;
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = '/designer-detail-admin.js';
+    script.dataset.designerDetailAdmin = '1';
+    document.head.appendChild(script);
+  }
+
   function addTopGuideLink() {
     const nav = document.querySelector('.top .links');
     if (!nav || nav.querySelector('[data-salon-guide-link]')) return;
@@ -77,6 +86,7 @@
   }
 
   function init() {
+    loadDesignerAdminEditor();
     addTopGuideLink();
     addDesignerGuideLink();
     enhanceDesignerCards();
