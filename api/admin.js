@@ -1,4 +1,4 @@
-import { adminAuth, adminDb, Timestamp } from './_firebaseAdmin.js';
+import { getAdminServices, isAdminConfigured } from './_firebaseAdmin.js';
 
 const SITE_DOCS = new Set(['settings', 'events', 'designers', 'styles', 'tips', 'blogLinks', 'faqs']);
 
@@ -17,12 +17,12 @@ function allowedEmails() {
   return new Set(
     String(process.env.ADMIN_EMAILS || '')
       .split(',')
-      .map((x) => x.trim().toLowerCase())
+      .map(x => x.trim().toLowerCase())
       .filter(Boolean)
   );
 }
 
-async function requireAdmin(request) {
+async function requireAdmin(request, adminAuth) {
   const authHeader = request.headers.get('authorization') || '';
   const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
 
@@ -39,18 +39,16 @@ async function requireAdmin(request) {
 }
 
 function ts(value) {
-  if (!value) return null;
-  return typeof value.toMillis === 'function' ? value.toMillis() : null;
+  return value && typeof value.toMillis === 'function' ? value.toMillis() : null;
 }
 
-async function saveSite(body, admin) {
+async function saveSite(body, admin, adminDb, Timestamp) {
   const name = String(body.name || '');
-  if (!SITE_DOCS.has(name)) return json({ ok: false, message: '허용되지 않은 설정입니다.' }, 400);
+  if (!SITE_DOCS.has(name)) return json({ ok:false, message:'허용되지 않은 설정입니다.' }, 400);
 
   const items = body.items;
-  const size = JSON.stringify(items ?? null).length;
-  if (size > 850_000) {
-    return json({ ok: false, message: '저장 데이터가 너무 큽니다. 이미지 용량을 줄여 주세요.' }, 413);
+  if (JSON.stringify(items ?? null).length > 850000) {
+    return json({ ok:false, message:'저장 데이터가 너무 큽니다. 이미지 용량을 줄여 주세요.' }, 413);
   }
 
   await adminDb.collection('site').doc(name).set({
@@ -59,91 +57,100 @@ async function saveSite(body, admin) {
     updatedBy: admin.email,
   });
 
-  return json({ ok: true });
+  return json({ ok:true });
 }
 
-async function listInquiries() {
-  const snap = await adminDb
-    .collection('inquiries')
-    .orderBy('createdAt', 'desc')
-    .limit(100)
-    .get();
+async function listInquiries(adminDb) {
+  const snap = await adminDb.collection('inquiries').orderBy('createdAt','desc').limit(100).get();
 
   return json({
-    ok: true,
-    items: snap.docs.map((doc) => {
-      const d = doc.data();
+    ok:true,
+    items:snap.docs.map(doc=>{
+      const d=doc.data();
       return {
-        id: doc.id,
-        customerId: d.customerId || '',
-        language: d.language || 'ko',
-        category: d.category || 'other',
-        title: d.title || '',
-        content: d.content || '',
-        answer: d.answer || '',
-        status: d.status || 'waiting',
-        createdAt: ts(d.createdAt),
-        answeredAt: ts(d.answeredAt),
-        answeredBy: d.answeredBy || '',
+        id:doc.id,
+        customerId:d.customerId||'',
+        language:d.language||'ko',
+        category:d.category||'other',
+        title:d.title||'',
+        content:d.content||'',
+        answer:d.answer||'',
+        status:d.status||'waiting',
+        createdAt:ts(d.createdAt),
+        answeredAt:ts(d.answeredAt),
+        answeredBy:d.answeredBy||'',
       };
     }),
   });
 }
 
-async function answerInquiry(body, admin) {
-  const inquiryId = String(body.inquiryId || '').trim();
-  const answer = String(body.answer || '').trim().slice(0, 3000);
+async function answerInquiry(body, admin, adminDb, Timestamp) {
+  const inquiryId=String(body.inquiryId||'').trim();
+  const answer=String(body.answer||'').trim().slice(0,3000);
 
-  if (!inquiryId || answer.length < 1) {
-    return json({ ok: false, message: '답변 내용을 입력해 주세요.' }, 400);
-  }
+  if(!inquiryId || !answer) return json({ok:false,message:'답변 내용을 입력해 주세요.'},400);
 
-  const ref = adminDb.collection('inquiries').doc(inquiryId);
-  const snap = await ref.get();
-  if (!snap.exists) return json({ ok: false, message: '문의를 찾을 수 없습니다.' }, 404);
+  const ref=adminDb.collection('inquiries').doc(inquiryId);
+  const snap=await ref.get();
+  if(!snap.exists) return json({ok:false,message:'문의를 찾을 수 없습니다.'},404);
 
   await ref.update({
     answer,
-    status: 'answered',
-    answeredAt: Timestamp.now(),
-    answeredBy: admin.email,
+    status:'answered',
+    answeredAt:Timestamp.now(),
+    answeredBy:admin.email,
   });
 
-  return json({ ok: true });
+  return json({ok:true});
 }
 
-async function deleteInquiry(body) {
-  const inquiryId = String(body.inquiryId || '').trim();
-  if (!inquiryId) return json({ ok: false, message: '문의 ID가 없습니다.' }, 400);
+async function deleteInquiry(body, adminDb) {
+  const inquiryId=String(body.inquiryId||'').trim();
+  if(!inquiryId) return json({ok:false,message:'문의 ID가 없습니다.'},400);
 
   await adminDb.collection('inquiries').doc(inquiryId).delete();
-  return json({ ok: true });
+  return json({ok:true});
 }
 
 export default {
   async fetch(request) {
-    if (request.method !== 'POST') {
-      return json({ ok: false, message: 'POST 요청만 지원합니다.' }, 405);
+    if(request.method==='GET') {
+      return json({
+        ok:true,
+        service:'admin',
+        configured:isAdminConfigured() && allowedEmails().size>0,
+      });
     }
 
+    if(request.method!=='POST') return json({ok:false,message:'POST 요청만 지원합니다.'},405);
+
     try {
-      const admin = await requireAdmin(request);
-      const body = await request.json();
+      if(!isAdminConfigured()) {
+        return json({ok:false,code:'SERVICE_NOT_CONFIGURED',message:'관리자 서버 설정이 아직 완료되지 않았습니다.'},503);
+      }
 
-      if (body.action === 'whoami') return json({ ok: true, email: admin.email });
-      if (body.action === 'saveSite') return await saveSite(body, admin);
-      if (body.action === 'listInquiries') return await listInquiries();
-      if (body.action === 'answerInquiry') return await answerInquiry(body, admin);
-      if (body.action === 'deleteInquiry') return await deleteInquiry(body);
+      if(!allowedEmails().size) {
+        return json({ok:false,code:'ADMIN_EMAILS_NOT_CONFIGURED',message:'관리자 이메일 허용 목록이 설정되지 않았습니다.'},503);
+      }
 
-      return json({ ok: false, message: '지원하지 않는 관리자 요청입니다.' }, 400);
-    } catch (error) {
-      console.error(error);
-      const status = error.status || 500;
-      return json(
-        { ok: false, message: status === 500 ? '관리자 서버 처리 중 오류가 발생했습니다.' : error.message },
-        status
-      );
+      const {adminDb,adminAuth,Timestamp}=getAdminServices();
+      const admin=await requireAdmin(request,adminAuth);
+      const body=await request.json();
+
+      if(body.action==='whoami') return json({ok:true,email:admin.email});
+      if(body.action==='saveSite') return await saveSite(body,admin,adminDb,Timestamp);
+      if(body.action==='listInquiries') return await listInquiries(adminDb);
+      if(body.action==='answerInquiry') return await answerInquiry(body,admin,adminDb,Timestamp);
+      if(body.action==='deleteInquiry') return await deleteInquiry(body,adminDb);
+
+      return json({ok:false,message:'지원하지 않는 관리자 요청입니다.'},400);
+    } catch(error) {
+      console.error('admin api error:',error);
+      return json({
+        ok:false,
+        code:error?.code||'ADMIN_ERROR',
+        message:(error?.status||500)===500?'관리자 서버 처리 중 오류가 발생했습니다.':error.message,
+      },error?.status||500);
     }
   },
 };

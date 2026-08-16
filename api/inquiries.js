@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { createHash } from 'node:crypto';
-import { adminDb, Timestamp } from './_firebaseAdmin.js';
+import { getAdminServices, isAdminConfigured } from './_firebaseAdmin.js';
 
 const LANGUAGES = new Set(['ko', 'en', 'ja', 'zh']);
 const CATEGORIES = new Set(['reservation', 'price', 'cut', 'perm', 'color', 'care', 'foreign', 'other']);
@@ -44,7 +44,7 @@ function timestampToMs(value) {
   return null;
 }
 
-async function createInquiry(body) {
+async function createInquiry(body, adminDb, Timestamp) {
   const customerId = cleanText(body.customerId, 40);
   const password = String(body.password ?? '');
   const title = cleanText(body.title, 80);
@@ -52,20 +52,22 @@ async function createInquiry(body) {
   const language = LANGUAGES.has(body.language) ? body.language : 'ko';
   const category = CATEGORIES.has(body.category) ? body.category : 'other';
 
-  // 아주 단순한 봇 방지용 honeypot
   if (body.website) return json({ ok: true });
 
   if (!validCustomerId(customerId)) {
     return json({ ok: false, message: '아이디는 3~40자의 한글/영문/숫자/._- 만 사용할 수 있어요.' }, 400);
   }
+
   if (!validPassword(password)) {
-    return json({ ok: false, message: '비밀번호는 4자 이상, UTF-8 기준 64바이트 이하로 입력해 주세요.' }, 400);
+    return json({ ok: false, message: '비밀번호는 4자 이상으로 입력해 주세요.' }, 400);
   }
+
   if (title.length < 2 || content.length < 2) {
     return json({ ok: false, message: '제목과 문의내용을 입력해 주세요.' }, 400);
   }
 
   const passwordHash = await bcrypt.hash(password, 11);
+
   const ref = await adminDb.collection('inquiries').add({
     customerId,
     customerKey: customerKey(customerId),
@@ -89,7 +91,7 @@ async function createInquiry(body) {
   }, 201);
 }
 
-async function listMine(body) {
+async function listMine(body, adminDb) {
   const customerId = cleanText(body.customerId, 40);
   const password = String(body.password ?? '');
 
@@ -104,6 +106,7 @@ async function listMine(body) {
     .get();
 
   const matched = [];
+
   for (const doc of snap.docs) {
     const data = doc.data();
     if (await bcrypt.compare(password, data.passwordHash || '')) {
@@ -128,7 +131,7 @@ async function listMine(body) {
   return json({ ok: true, items: matched });
 }
 
-async function readMine(body) {
+async function readMine(body, adminDb) {
   const inquiryId = cleanText(body.inquiryId, 120);
   const customerId = cleanText(body.customerId, 40);
   const password = String(body.password ?? '');
@@ -144,7 +147,7 @@ async function readMine(body) {
 
   const data = doc.data();
   const sameCustomer = data.customerKey === customerKey(customerId);
-  const samePassword = sameCustomer && (await bcrypt.compare(password, data.passwordHash || ''));
+  const samePassword = sameCustomer && await bcrypt.compare(password, data.passwordHash || '');
 
   if (!samePassword) {
     return json({ ok: false, message: '아이디 또는 비밀번호가 일치하지 않습니다.' }, 401);
@@ -168,20 +171,45 @@ async function readMine(body) {
 
 export default {
   async fetch(request) {
+    if (request.method === 'GET') {
+      return json({
+        ok: true,
+        service: 'customer-inquiries',
+        configured: isAdminConfigured(),
+        customerMembershipRequired: false,
+      });
+    }
+
     if (request.method !== 'POST') {
-      return json({ ok: false, message: 'POST 요청만 지원합니다.' }, 405);
+      return json({ ok: false, message: '지원하지 않는 요청 방식입니다.' }, 405);
     }
 
     try {
+      if (!isAdminConfigured()) {
+        return json({
+          ok: false,
+          code: 'SERVICE_NOT_CONFIGURED',
+          message: '문의 저장 서버 설정이 아직 완료되지 않았습니다. 관리자에게 문의해 주세요.',
+        }, 503);
+      }
+
+      const { adminDb, Timestamp } = getAdminServices();
       const body = await request.json();
-      if (body.action === 'create') return await createInquiry(body);
-      if (body.action === 'list') return await listMine(body);
-      if (body.action === 'read') return await readMine(body);
+
+      if (body.action === 'create') return await createInquiry(body, adminDb, Timestamp);
+      if (body.action === 'list') return await listMine(body, adminDb);
+      if (body.action === 'read') return await readMine(body, adminDb);
 
       return json({ ok: false, message: '지원하지 않는 요청입니다.' }, 400);
     } catch (error) {
-      console.error(error);
-      return json({ ok: false, message: '서버 처리 중 오류가 발생했습니다.' }, 500);
+      console.error('inquiries api error:', error);
+      return json({
+        ok: false,
+        code: error?.code || 'INQUIRY_ERROR',
+        message: error?.code === 'FIREBASE_ADMIN_NOT_CONFIGURED'
+          ? '문의 저장 서버 설정이 아직 완료되지 않았습니다.'
+          : '문의 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+      }, error?.status || 500);
     }
   },
 };
