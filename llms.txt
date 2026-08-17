@@ -1,0 +1,40 @@
+# 준오헤어 건대역2호점
+
+> 서울 광진구 건대입구역 인근 헤어살롱의 공개 웹사이트입니다.
+
+## Canonical site
+- https://junokd02.com/
+
+## Salon
+- Name: 준오헤어 건대역2호점
+- Address: 서울 광진구 능동로 109 2층
+- Hours: 월~토 10:00~20:30
+- Main services: 커트, 펌, 컬러, 매직, 볼륨매직, 클리닉, 헤어스타일 상담
+- Areas: 건대입구, 화양동, 광진구
+
+## Important pages
+- Salon guide: https://junokd02.com/salon-guide.html
+- Hair guide: https://junokd02.com/hair-tips.html
+- FAQ: https://junokd02.com/faq.html
+- Salon/service summary: https://junokd02.com/ai-guide.html
+- Layered cut: https://junokd02.com/layered-cut.html
+- Perm guide: https://junokd02.com/perm-guide.html
+- Hair color: https://junokd02.com/hair-color-guide.html
+- Hair clinic: https://junokd02.com/hair-clinic-guide.html
+- Designers: https://junokd02.com/designer-guide.html
+- Price guide: https://junokd02.com/price-guide.html
+- Foreign guests: https://junokd02.com/foreign.html
+
+## Designers
+- 박상일 대표원장
+- 설빈
+- 정민
+- 서단
+- 혜진
+- 지형
+- 호빈
+- 백건
+
+## Content notes
+- Service suitability depends on current hair condition, damage level and previous chemical treatment history.
+- For exact treatment plans and prices, use the salon's booking or inquiry flow.
