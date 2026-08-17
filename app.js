@@ -3,7 +3,7 @@ import { db, doc, onSnapshot } from './firebase.js';
 export const $ = (id)=>document.getElementById(id);
 export const cats = {cut:'커트',perm:'펌',color:'컬러',care:'케어'};
 export const defaults = {
-  site:{reserveUrl:'https://map.naver.com/', blogUrl:'https://blog.naver.com/', salonName:'준오헤어 건대역2호점'},
+  site:{reserveUrl:'https://map.naver.com/p/search/준오헤어%20건대역2호점', blogUrl:'https://blog.naver.com/', salonName:'준오헤어 건대역2호점', heroTitle:'당신에게 가장\n자연스러운 스타일을\n설계합니다.', heroLead:'얼굴형, 모발 상태, 라이프스타일까지 세심하게 살펴 가장 편안하고 오래가는 디자인을 제안합니다.', salonTitle:'차분하고 따뜻한 무드의 프리미엄 공간', salonDesc:'준오헤어 건대역2호점은 편안한 상담과 섬세한 시술을 위해 넓고 깔끔한 공간을 준비했습니다. 첫 방문 고객님도 부담 없이 원하는 스타일을 상담받을 수 있습니다.', address:'서울 광진구 능동로 109 2층', hours:'월~토 10:00~20:30', phone:'02-468-0605', heroImage:'/assets/salon-hero.webp', salonImages:['/assets/salon-01.webp','/assets/salon-02.webp','/assets/salon-03.webp']},
   designers:[
     {name:'박상일', position:'대표원장', keyword:'프리미엄 상담', intro:'고객님의 분위기와 모발 컨디션을 함께 보고 완성도 높은 스타일을 제안합니다.', photo:''},
     {name:'설빈', position:'디자이너', keyword:'감성 스타일', intro:'자연스럽고 손질 편한 디자인을 제안합니다.', photo:''},
@@ -53,8 +53,23 @@ let activeStyle='cut', activeTip='cut';
 let state=JSON.parse(JSON.stringify(defaults));
 
 function render(){
-  $('reserveTop').href=state.site.reserveUrl||'#';
-  $('blogHome').href=state.site.blogUrl||'#';
+  const site={...defaults.site,...(state.site||{})};
+  state.site=site;
+  $('reserveTop').href=site.reserveUrl||'#';
+  if($('reserveHeader')) $('reserveHeader').href=site.reserveUrl||'#';
+  $('blogHome').href=site.blogUrl||'#';
+  if($('heroTitle')) $('heroTitle').innerHTML=esc(site.heroTitle||defaults.site.heroTitle).replace(/\n/g,'<br>');
+  if($('heroLead')) $('heroLead').textContent=site.heroLead||defaults.site.heroLead;
+  if($('salonTitle')) $('salonTitle').textContent=site.salonTitle||defaults.site.salonTitle;
+  if($('salonDesc')) $('salonDesc').textContent=site.salonDesc||defaults.site.salonDesc;
+  if($('siteAddress')) $('siteAddress').textContent=site.address||defaults.site.address;
+  if($('siteHours')) $('siteHours').textContent=site.hours||defaults.site.hours;
+  if($('footerAddress')) $('footerAddress').textContent=site.address||defaults.site.address;
+  if($('footerHours')) $('footerHours').textContent=site.hours||defaults.site.hours;
+  if($('footerPhone')) $('footerPhone').textContent=site.phone||defaults.site.phone;
+  if($('heroPhoto')) $('heroPhoto').src=site.heroImage||defaults.site.heroImage;
+  const salonImages=Array.isArray(site.salonImages)?site.salonImages:defaults.site.salonImages;
+  [1,2,3].forEach((n,i)=>{if($(`salonPhoto${n}`)) $(`salonPhoto${n}`).src=salonImages[i]||defaults.site.salonImages[i];});
 
   $('eventList').innerHTML=(state.events||[]).map(x=>`<article class="item"><div class="photo">${imageBox(x.image,x.title)}</div><div class="body"><h3>${esc(x.title)}</h3><p>${esc(x.desc)}</p>${x.link?`<a class="btn light" target="_blank" rel="noopener" href="${esc(x.link)}">자세히 보기</a>`:''}</div></article>`).join('')||'<p>등록된 이벤트가 없습니다.</p>';
 
@@ -74,7 +89,7 @@ function render(){
     snap=>{
       if(snap.exists()){
         const v=snap.data().items;
-        state[name==='settings'?'site':name]=v;
+        state[name==='settings'?'site':name]=name==='settings'?{...defaults.site,...v}:v;
         render();
         window.__JUNO_STATE__=state;
       }

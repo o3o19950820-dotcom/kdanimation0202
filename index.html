@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="ko">
-<script src="/designer-links.js" defer></script>
-  <head>
+<head>
   <!-- Google Tag Manager -->
   <script>
   (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -29,7 +28,7 @@
   <meta property="og:title" content="준오헤어 건대역2호점">
   <meta property="og:description" content="건대입구역 프리미엄 헤어살롱. 디자이너, 스타일, 외국인 고객 안내, 비공개 문의.">
   <meta property="og:url" content="https://junokd02.com/">
-  <meta name="theme-color" content="#8b6f57">
+  <meta name="theme-color" content="#4b2e20">
 
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
@@ -88,82 +87,76 @@
 
 <header class="top">
   <div class="wrap nav">
-    <a class="logo" href="#home">JUNO HAIR <small>건대역2호점</small></a>
+    <a class="logo logoImage" href="#home" aria-label="준오헤어 건대역2호점 홈"><img src="/assets/logo-black.png" alt="준오헤어 건대역2호점"></a>
     <nav class="links">
-      <a href="#events">이벤트</a>
+      <a href="#salon">매장 소개</a>
       <a href="#designers">디자이너</a>
-      <a href="/hair-tips.html">헤어TIP</a>
-      <a href="/foreign.html">Foreign Guest</a>
-      <a href="#inquiry">고객문의</a>
+      <a href="#styles">스타일</a>
+      <a href="/foreign.html">외국인 안내</a>
+      <a href="#tips">이용 안내</a>
       <a href="#contact">오시는 길</a>
-      <button class="mini" id="adminOpen">관리자</button>
+      <button class="mini adminTopBtn" id="adminOpen">관리자</button>
     </nav>
+    <a class="headerReserve" id="reserveHeader" target="_blank" rel="noopener">네이버 예약</a>
+    <button class="mobileMenuBtn" id="mobileMenuBtn" type="button" aria-label="메뉴 열기">☰</button>
   </div>
 </header>
 
 <main id="home">
 <section class="hero heroPhoto">
-  <div class="heroBg" aria-hidden="true"></div>
+  <img class="heroRealImage" id="heroPhoto" src="/assets/salon-hero.webp" alt="준오헤어 건대역2호점 매장 내부">
   <div class="heroOverlay" aria-hidden="true"></div>
   <div class="wrap heroGrid reveal">
     <div class="heroText">
-      <span class="badge glass">건대 미용실 · 화양동 미용실 · 광진구 미용실</span>
-      <h1>준오헤어<br>건대역2호점</h1>
-      <p class="lead">따뜻한 공간에서 얼굴형, 모발 상태, 라이프스타일을 함께 보고 당신에게 가장 자연스러운 스타일을 제안합니다.</p>
+      <span class="heroKicker">JUNO HAIR · KONKUK UNIV. 2</span>
+      <h1 id="heroTitle">당신에게 가장<br>자연스러운 스타일을<br>설계합니다.</h1>
+      <p class="lead" id="heroLead">얼굴형, 모발 상태, 라이프스타일까지 세심하게 살펴 가장 편안하고 오래가는 디자인을 제안합니다.</p>
       <div class="actions">
-        <a class="btn floatBtn" id="reserveTop" target="_blank" rel="noopener">네이버예약</a>
+        <a class="btn floatBtn" id="reserveTop" target="_blank" rel="noopener"><span class="naverN">N</span> 네이버 예약</a>
         <a class="btn light glassBtn" href="#designers">디자이너 보기</a>
       </div>
     </div>
-    <div class="heroCard glassCard">
-      <b>Premium Hair Salon</b>
-      <p>서울 광진구 능동로 109 2층</p>
-      <p>월~토 10:00~20:30</p>
-      <p>커트 · 펌 · 컬러 · 케어 · 스타일 상담</p>
-    </div>
   </div>
-  <a class="scrollCue" href="#events" aria-label="아래로 이동">↓</a>
+</section>
+<section class="quickInfoBar">
+  <div><span>⌖</span><b id="siteAddress">서울 광진구 능동로 109 2층</b></div>
+  <div><span>◷</span><b id="siteHours">월~토 10:00~20:30</b></div>
+  <div><span>✂</span><b>커트 · 펌 · 컬러 · 케어</b></div>
 </section>
 
-<section class="section salonIntro">
-  <div class="wrap introGrid reveal">
-    <div>
-      <span class="badge">매장 분위기</span>
-      <h2>차분하고 따뜻한 무드의 프리미엄 공간</h2>
-      <p>준오헤어 건대역2호점은 편안한 상담과 섬세한 시술을 위해 넓고 깔끔한 공간을 준비했습니다. 첫 방문 고객님도 부담 없이 원하는 스타일을 상담받을 수 있습니다.</p>
+<section id="salon" class="section salonIntro reveal">
+  <div class="wrap">
+    <div class="sectionEditorialHead">
+      <div><span class="eyebrow">OUR SPACE</span><h2 id="salonTitle">차분하고 따뜻한 무드의 프리미엄 공간</h2></div>
+      <p id="salonDesc">준오헤어 건대역2호점은 편안한 상담과 섬세한 시술을 위해 넓고 깔끔한 공간을 준비했습니다. 첫 방문 고객님도 부담 없이 원하는 스타일을 상담받을 수 있습니다.</p>
     </div>
-    <div class="stats">
-      <div><strong data-count="1">0</strong><span>1:1 맞춤 상담</span></div>
-      <div><strong data-count="4">0</strong><span>커트·펌·컬러·케어</span></div>
-      <div><strong data-count="8">0</strong><span>디자이너 소개</span></div>
+    <div class="salonPhotoGrid">
+      <button type="button" class="salonShot wide"><img id="salonPhoto1" src="/assets/salon-01.webp" alt="준오헤어 건대역2호점 리셉션"></button>
+      <button type="button" class="salonShot"><img id="salonPhoto2" src="/assets/salon-02.webp" alt="준오헤어 건대역2호점 데스크"></button>
+      <button type="button" class="salonShot"><img id="salonPhoto3" src="/assets/salon-03.webp" alt="준오헤어 건대역2호점 시술 공간"></button>
     </div>
   </div>
 </section>
 
-<section class="styleMarquee" aria-label="추천 스타일 키워드">
-  <div class="styleTrack">
-    <span>레이어드컷</span><span>허쉬컷</span><span>슬릭컷</span><span>태슬컷</span><span>빌드펌</span><span>히피펌</span><span>애쉬브라운</span><span>클리닉</span>
-    <span>레이어드컷</span><span>허쉬컷</span><span>슬릭컷</span><span>태슬컷</span><span>빌드펌</span><span>히피펌</span><span>애쉬브라운</span><span>클리닉</span>
-  </div>
-</section>
+
 
 <section id="events" class="section reveal eventSection">
   <div class="wrap">
-    <div class="head"><div><h2>진행 중 이벤트</h2><p>관리자에서 사진과 내용을 추가할 수 있습니다.</p></div></div>
+    <div class="head editorial"><div><span class="eyebrow">EVENT</span><h2>진행 중 이벤트</h2><p>매장에서 준비한 소식과 혜택을 확인해보세요.</p></div></div>
     <div id="eventList" class="grid cards"></div>
   </div>
 </section>
 
 <section id="designers" class="section reveal">
   <div class="wrap">
-    <div class="head"><div><h2>디자이너</h2><p>사진, 직급, 키워드, 소개글을 확인해 보세요.</p></div></div>
+    <div class="head editorial"><div><span class="eyebrow">DESIGNERS</span><h2>디자이너</h2><p>전문 분야와 스타일을 확인해보세요.</p></div></div>
     <div id="designerList" class="grid designers"></div>
   </div>
 </section>
 
 <section id="styles" class="section reveal">
   <div class="wrap">
-    <div class="head"><div><h2>헤어스타일 종류</h2><p>커트 · 펌 · 컬러 · 케어 탭별 스타일</p></div></div>
+    <div class="head editorial"><div><span class="eyebrow">STYLE PORTFOLIO</span><h2>스타일 포트폴리오</h2><p>커트 · 펌 · 컬러 · 케어</p></div></div>
     <div class="tabs" data-target="style">
       <button data-cat="cut" class="on">커트</button>
       <button data-cat="perm">펌</button>
@@ -288,6 +281,15 @@
   </div>
 </section>
 
+<section class="utilityStrip reveal">
+  <div class="wrap utilityGrid">
+    <a class="utilityCard" href="/foreign.html"><span class="utilityIcon">◎</span><span><strong>Foreign Guest Guide</strong><small>EN / 日本語 / 中文</small></span><i>→</i></a>
+    <a class="utilityCard" href="#faq"><span class="utilityIcon">?</span><span><strong>FAQ</strong><small>자주 묻는 질문</small></span><i>→</i></a>
+    <a class="utilityCard" href="#inquiry"><span class="utilityIcon">✉</span><span><strong>고객 문의</strong><small>비공개 문의 작성 / 확인</small></span><i>→</i></a>
+    <a class="utilityCard" href="#contact"><span class="utilityIcon">⌖</span><span><strong>오시는 길</strong><small>지도 및 교통 안내</small></span><i>→</i></a>
+  </div>
+</section>
+
 <section id="blog" class="section reveal">
   <div class="wrap">
     <div class="head"><div><h2>네이버 블로그</h2><p>매장 소식과 스타일 콘텐츠를 확인하세요.</p></div></div>
@@ -298,7 +300,7 @@
   </div>
 </section>
 
-<section id="faq" class="section faq">
+<section id="faq" class="section reveal faq">
   <div class="wrap">
     <div class="head"><div><h2>FAQ</h2><p>첫 방문 전 자주 묻는 질문</p></div></div>
     <div id="faqList"></div>
@@ -355,11 +357,13 @@
 </dialog>
 
 <div id="toast"></div>
-<footer><div class="wrap">© 준오헤어 건대역2호점 · 건대 미용실 · 화양동 미용실 · 광진구 미용실</div></footer>
+<footer class="premiumFooter"><div class="wrap footerRow"><img src="/assets/logo-white.png" alt="준오헤어 건대역2호점"><div><span id="footerAddress">서울 광진구 능동로 109 2층</span><span id="footerHours">월~토 10:00~20:30</span><span id="footerPhone">02-468-0605</span></div><small>© JUNO HAIR KONKUK UNIV. 2. ALL RIGHTS RESERVED.</small></div></footer>
 
 <script type="module" src="firebase.js"></script>
 <script type="module" src="app.js"></script>
 <script type="module" src="inquiry.js"></script>
 <script type="module" src="admin.js"></script>
+<script src="/designer-links.js"></script>
+<script>document.getElementById("mobileMenuBtn")?.addEventListener("click",()=>document.querySelector(".top .links")?.classList.toggle("mobileOpen"));document.querySelectorAll(".top .links a").forEach(a=>a.addEventListener("click",()=>document.querySelector(".top .links")?.classList.remove("mobileOpen")));</script>
 </body>
 </html>

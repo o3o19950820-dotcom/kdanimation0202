@@ -1,1 +1,8 @@
-{"name":"준오헤어 건대역2호점","short_name":"JUNO KD02","start_url":"/","display":"standalone","background_color":"#fbf6ef","theme_color":"#8b6f57","icons":[]}
+{
+  "name": "준오헤어 건대역2호점",
+  "short_name": "JUNO 건대2",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f3ee",
+  "theme_color": "#4b2e20"
+}
