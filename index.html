@@ -362,7 +362,25 @@
 <script type="module" src="firebase.js"></script>
 <script type="module" src="app.js"></script>
 <script type="module" src="inquiry.js"></script>
-<script type="module" src="admin.js"></script>
+<script>
+(function(){
+  const btn=document.getElementById('adminOpen');
+  const dialog=document.getElementById('adminDialog');
+  if(!btn || !dialog) return;
+  btn.addEventListener('click', function(){
+    try{
+      if(typeof dialog.showModal === 'function'){
+        if(!dialog.open) dialog.showModal();
+      }else{
+        dialog.setAttribute('open','');
+      }
+    }catch(e){
+      dialog.setAttribute('open','');
+    }
+  });
+})();
+</script>
+<script type="module" src="admin-ui.js"></script>
 <script src="/designer-links.js"></script>
 <script>document.getElementById("mobileMenuBtn")?.addEventListener("click",()=>document.querySelector(".top .links")?.classList.toggle("mobileOpen"));document.querySelectorAll(".top .links a").forEach(a=>a.addEventListener("click",()=>document.querySelector(".top .links")?.classList.remove("mobileOpen")));</script>
 </body>
