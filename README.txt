@@ -1,31 +1,17 @@
-디자이너 상세페이지 '전체 수정 가능' 최종 패치
+가격표 응답 오류 수정본
 
-이번 수정으로 관리자 > 디자이너 목록에 '상세페이지 편집' 버튼이 추가됩니다.
+딱 1개만 교체하면 됩니다.
 
-관리자에서 수정 가능한 항목:
-- 프로필 사진
-- 이름
-- 직급
-- 메인 키워드
-- 메인 소개글
-- 전문 분야
-- 추천 고객
-- 상담 포인트
-- 예약 안내
-- 전문 스타일
-- 상담 방식
-- 시술 사례
-- 홈케어 팁
-- FAQ 질문/답변 3세트
+GitHub 저장소에서:
+api/prices.js
 
-업로드:
-1) ZIP 압축 풀기
-2) 안의 파일을 GitHub 저장소 맨 바깥(root)에 전부 업로드
-3) 같은 이름의 designer-links.js / designer-*.html 파일은 덮어쓰기
-4) Commit changes
-5) Vercel 최신 배포 Ready 기다리기
+기존 api/prices.js를 이 ZIP 안의 api/prices.js로 교체하세요.
 
-중요:
-- admin.js / app.js / 문의 API / Firebase Admin 코드는 건드리지 않습니다.
-- 기존 디자이너 데이터와 사진은 삭제되지 않습니다.
-- 새 상세 항목은 비어 있다가 관리자가 입력한 것만 상세페이지에 반영됩니다.
+건드리지 마세요:
+- index.html
+- firebase.js
+- api/_firebaseAdmin.js
+- 관리자 로그인 관련 파일
+- ADMIN_EMAILS 환경변수
+
+이 수정본은 기존 api/_firebaseAdmin.js의 getAdminServices() 구조에 맞춘 버전입니다.
