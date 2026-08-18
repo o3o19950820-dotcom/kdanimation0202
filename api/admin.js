@@ -1,6 +1,8 @@
 import { getAdminServices, isAdminConfigured } from './_firebaseAdmin.js';
 
 const SITE_DOCS = new Set(['settings', 'events', 'designers', 'styles', 'tips', 'blogLinks', 'faqs']);
+const DATA_IMAGE_RE = /^data:(image\/(?:jpeg|jpg|png|webp|gif));base64,/i;
+const MAX_IMAGE_DATA_LENGTH = 800000;
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -42,13 +44,70 @@ function ts(value) {
   return value && typeof value.toMillis === 'function' ? value.toMillis() : null;
 }
 
+async function saveImageData(dataUrl, admin, adminDb, Timestamp) {
+  const value = String(dataUrl || '');
+  const match = value.match(DATA_IMAGE_RE);
+  if (!match) return value;
+
+  if (value.length > MAX_IMAGE_DATA_LENGTH) {
+    const error = new Error('압축된 이미지가 아직 너무 큽니다. 이미지 크기를 조금만 더 줄여 주세요.');
+    error.status = 413;
+    throw error;
+  }
+
+  const ref = adminDb
+    .collection('site')
+    .doc('_media')
+    .collection('images')
+    .doc();
+
+  await ref.set({
+    dataUrl: value,
+    contentType: match[1].toLowerCase().replace('image/jpg', 'image/jpeg'),
+    createdAt: Timestamp.now(),
+    createdBy: admin.email,
+  });
+
+  return `/api/image?id=${encodeURIComponent(ref.id)}`;
+}
+
+async function externalizeImages(value, admin, adminDb, Timestamp) {
+  if (typeof value === 'string') {
+    return DATA_IMAGE_RE.test(value)
+      ? await saveImageData(value, admin, adminDb, Timestamp)
+      : value;
+  }
+
+  if (Array.isArray(value)) {
+    const out = [];
+    for (const item of value) {
+      out.push(await externalizeImages(item, admin, adminDb, Timestamp));
+    }
+    return out;
+  }
+
+  if (value && typeof value === 'object') {
+    const out = {};
+    for (const [key, item] of Object.entries(value)) {
+      out[key] = await externalizeImages(item, admin, adminDb, Timestamp);
+    }
+    return out;
+  }
+
+  return value;
+}
+
 async function saveSite(body, admin, adminDb, Timestamp) {
   const name = String(body.name || '');
   if (!SITE_DOCS.has(name)) return json({ ok:false, message:'허용되지 않은 설정입니다.' }, 400);
 
-  const items = body.items;
+  // Base64 이미지는 각각 별도 Firestore 문서에 저장하고,
+  // 사이트 데이터에는 짧은 /api/image URL만 남깁니다.
+  // 기존 Base64 이미지도 다음 저장 시 자동으로 URL 방식으로 이전됩니다.
+  const items = await externalizeImages(body.items, admin, adminDb, Timestamp);
+
   if (JSON.stringify(items ?? null).length > 850000) {
-    return json({ ok:false, message:'저장 데이터가 너무 큽니다. 이미지 용량을 줄여 주세요.' }, 413);
+    return json({ ok:false, message:'저장 데이터가 너무 큽니다. 이미지 외의 등록 데이터가 너무 많은지 확인해 주세요.' }, 413);
   }
 
   await adminDb.collection('site').doc(name).set({
@@ -57,7 +116,7 @@ async function saveSite(body, admin, adminDb, Timestamp) {
     updatedBy: admin.email,
   });
 
-  return json({ ok:true });
+  return json({ ok:true, items });
 }
 
 async function listInquiries(adminDb) {
