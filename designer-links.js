@@ -5,3 +5,5 @@
   function init(){loadEditor();enhance();const l=document.querySelector('#designerList');if(l)new MutationObserver(enhance).observe(l,{childList:true,subtree:true});}
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 })();
+// 가격표 애드온: 기존 사이트 구조는 건드리지 않고 가격표 링크/관리자 탭만 추가합니다.
+import('/price-addon.js').catch(err=>console.error('price addon load error', err));
