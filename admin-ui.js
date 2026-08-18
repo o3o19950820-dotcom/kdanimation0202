@@ -4,7 +4,7 @@ import {
   signOut,
   onAuthStateChanged
 } from './firebase.js';
-import { $, toast, esc, cats } from './app.js';
+import { $, toast, esc, cats, faqCats, faqCategoryOf } from './app.js';
 
 let adminTab='site';
 let inquiryCache=[];
@@ -94,8 +94,8 @@ async function save(name,items){
   toast('저장 완료');
 }
 
-function catOptions(selected){
-  return Object.entries(cats).map(([k,v])=>`<option value="${k}" ${selected===k?'selected':''}>${v}</option>`).join('');
+function catOptions(selected,map=cats){
+  return Object.entries(map).map(([k,v])=>`<option value="${k}" ${selected===k?'selected':''}>${v}</option>`).join('');
 }
 function imgInput(id){
   return `<input id="${id}" type="file" accept="image/*"><p class="hint">사진은 자동 압축 후 저장됩니다. Firestore 문서 1MB 한도를 넘지 않도록 큰 사진은 한 장씩 올려주세요.</p>`;
@@ -151,7 +151,7 @@ async function renderAdmin(){
   if(adminTab==='style') c.innerHTML=manageList('styles',s.styles,['cat','title','desc'],true);
   if(adminTab==='tip') c.innerHTML=manageList('tips',s.tips,['cat','title','body'],false);
   if(adminTab==='blog') c.innerHTML=manageList('blogLinks',s.blogLinks,['title','url'],false);
-  if(adminTab==='faq') c.innerHTML=manageList('faqs',s.faqs,['q','a'],false);
+  if(adminTab==='faq') c.innerHTML=manageList('faqs',s.faqs,['cat','q','a'],false);
 
   if(adminTab==='inquiry'){
     c.innerHTML='<p class="hint">고객 문의를 불러오는 중...</p>';
@@ -175,14 +175,29 @@ function label(k){
   }[k]||k;
 }
 
-function manageList(name,arr=[],fields=[],hasImage=false){
-  return `<h3>${name}</h3><div class="adminGrid"><div class="card"><h4>새로 추가</h4><div class="form" id="addForm">${fields.map(f=>fieldHtml(f,'')).join('')}${hasImage?imgInput('newImage'):''}<button class="btn" data-add="${name}">추가</button></div></div><div class="card"><h4>등록 목록</h4>${arr.map((x,i)=>`<div class="row"><div><b>${esc(x.title||x.name||x.q||'항목')}</b><br><span class="hint">${esc(x.keyword||x.cat||x.url||'')}</span></div><div><button class="mini" data-edit="${name}" data-i="${i}">수정</button> <button class="mini" data-del="${name}" data-i="${i}">삭제</button></div></div>`).join('')||'<p class="hint">등록된 항목이 없습니다.</p>'}</div></div>`;
+function sectionTitle(name){
+  return {
+    events:'이벤트',designers:'디자이너',styles:'스타일',tips:'헤어TIP',
+    blogLinks:'블로그',faqs:'Q&A 게시판'
+  }[name]||name;
 }
 
-function fieldHtml(f,v){
-  if(f==='cat')return `<select id="f_cat">${catOptions(v)}</select>`;
-  if(['desc','intro','body','a'].includes(f))return `<textarea id="f_${f}" placeholder="${label(f)}">${esc(v)}</textarea>`;
-  return `<input id="f_${f}" placeholder="${label(f)}" value="${esc(v)}">`;
+function manageList(name,arr=[],fields=[],hasImage=false){
+  const help=name==='faqs'?'<p class="hint">카테고리를 선택하면 사이트의 Q&A 탭에 자동으로 분류됩니다. 기존 질문 중 카테고리가 없던 글은 질문 내용에 따라 자동 분류되어 보입니다.</p>':'';
+  return `<h3>${sectionTitle(name)}</h3>${help}<div class="adminGrid"><div class="card"><h4>새로 추가</h4><div class="form" id="addForm">${fields.map(f=>fieldHtml(f,'',name)).join('')}${hasImage?imgInput('newImage'):''}<button class="btn" data-add="${name}">추가</button></div></div><div class="card"><h4>등록 목록</h4>${arr.map((x,i)=>{
+    const meta=name==='faqs'?(faqCats[faqCategoryOf(x)]||'기타'):(x.keyword||x.cat||x.url||'');
+    return `<div class="row"><div><b>${esc(x.title||x.name||x.q||'항목')}</b><br><span class="hint">${esc(meta)}</span></div><div><button class="mini" data-edit="${name}" data-i="${i}">수정</button> <button class="mini" data-del="${name}" data-i="${i}">삭제</button></div></div>`;
+  }).join('')||'<p class="hint">등록된 항목이 없습니다.</p>'}</div></div>`;
+}
+
+function fieldHtml(f,v,name=''){
+  if(f==='cat'){
+    const map=name==='faqs'?faqCats:cats;
+    const selected=name==='faqs'?(map[v]?v:'other'):v;
+    return `<label><b>카테고리</b><select id="f_cat">${catOptions(selected,map)}</select></label>`;
+  }
+  if(['desc','intro','body','a'].includes(f))return `<label><b>${label(f)}</b><textarea id="f_${f}" placeholder="${label(f)}">${esc(v)}</textarea></label>`;
+  return `<label><b>${label(f)}</b><input id="f_${f}" placeholder="${label(f)}" value="${esc(v)}"></label>`;
 }
 
 function getForm(fields){
@@ -198,8 +213,16 @@ function fieldsFor(name){
     styles:['cat','title','desc'],
     tips:['cat','title','body'],
     blogLinks:['title','url'],
-    faqs:['q','a']
+    faqs:['cat','q','a']
   }[name];
+}
+
+function validateItem(name,item){
+  if(name==='faqs'){
+    if(!faqCats[item.cat]) item.cat='other';
+    if(!item.q || !item.a) throw new Error('질문과 답변을 모두 입력해 주세요.');
+  }
+  return item;
 }
 
 function bindAdmin(){
@@ -236,7 +259,7 @@ function bindAdmin(){
   document.querySelectorAll('[data-add]').forEach(btn=>btn.onclick=async()=>{
     try{
       const name=btn.dataset.add,fields=fieldsFor(name),arr=clone(state()[name]);
-      const item=getForm(fields);
+      const item=validateItem(name,getForm(fields));
       const file=$('newImage')?.files?.[0];
       if(file)item.image=await compress(file);
       if(name==='designers'&&file){item.photo=item.image;delete item.image}
@@ -265,12 +288,15 @@ function editItem(name,i){
   const c=$('adminContent');
   const imgKey=name==='designers'?'photo':'image';
 
-  c.innerHTML=`<h3>수정</h3><div class="form card">${fields.map(f=>fieldHtml(f,item[f]||'')).join('')}${(name==='events'||name==='designers'||name==='styles')?imgInput('editImage'):''}<button class="btn" id="saveEdit">수정 저장</button><button class="btn light" id="cancelEdit">취소</button></div>`;
+  c.innerHTML=`<h3>수정</h3><div class="form card">${fields.map(f=>{
+    const value=(name==='faqs'&&f==='cat')?faqCategoryOf(item):(item[f]||'');
+    return fieldHtml(f,value,name);
+  }).join('')}${(name==='events'||name==='designers'||name==='styles')?imgInput('editImage'):''}<button class="btn" id="saveEdit">수정 저장</button><button class="btn light" id="cancelEdit">취소</button></div>`;
 
   $('cancelEdit').onclick=renderAdmin;
   $('saveEdit').onclick=async()=>{
     try{
-      const updated={...item,...getForm(fields)};
+      const updated=validateItem(name,{...item,...getForm(fields)});
       const file=$('editImage')?.files?.[0];
       if(file)updated[imgKey]=await compress(file);
       arr[i]=updated;

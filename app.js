@@ -2,6 +2,23 @@ import { db, doc, onSnapshot } from './firebase.js';
 
 export const $ = (id)=>document.getElementById(id);
 export const cats = {cut:'커트',perm:'펌',color:'컬러',care:'케어'};
+export const faqCats = {cut:'커트',perm:'펌',color:'컬러',care:'케어',reservation:'예약·가격',other:'기타'};
+
+export function faqCategoryOf(item={}){
+  const saved=String(item.cat||'').trim();
+  if(faqCats[saved]) return saved;
+
+  const q=String(item.q||'').toLowerCase();
+  const text=q || String(item.a||'').toLowerCase();
+
+  if(/예약|방문|가격|비용|요금|결제|할인|기장\s*추가|당일|주차|영업\s*시간|전화|위치|찾아오|예약금/.test(text)) return 'reservation';
+  if(/염색|컬러|탈색|블리치|브라운|애쉬|톤\s*다운|톤다운|새치|염모|색\s*빠/.test(text)) return 'color';
+  if(/클리닉|케어|손상|트리트먼트|두피|홈\s*케어|홈케어|샴푸|모발\s*관리|헤어팩/.test(text)) return 'care';
+  if(/펌|매직|볼륨\s*매직|볼륨매직|다운\s*펌|다운펌|셋팅|세팅|열\s*펌|c컬|s컬|뿌리\s*펌|모류\s*교정|곱슬|스트레이트/i.test(text)) return 'perm';
+  if(/커트|컷|레이어드|허쉬|단발|중단발|앞머리|숱|남자\s*머리|가르마/.test(text)) return 'cut';
+  return 'other';
+}
+
 export const defaults = {
   site:{reserveUrl:'https://map.naver.com/p/search/준오헤어%20건대역2호점', blogUrl:'https://blog.naver.com/', salonName:'준오헤어 건대역2호점', heroTitle:'당신에게 가장\n자연스러운 스타일을\n설계합니다.', heroLead:'얼굴형, 모발 상태, 라이프스타일까지 세심하게 살펴 가장 편안하고 오래가는 디자인을 제안합니다.', salonTitle:'차분하고 따뜻한 무드의 프리미엄 공간', salonDesc:'준오헤어 건대역2호점은 편안한 상담과 섬세한 시술을 위해 넓고 깔끔한 공간을 준비했습니다. 첫 방문 고객님도 부담 없이 원하는 스타일을 상담받을 수 있습니다.', address:'서울 광진구 능동로 109 2층', hours:'월~토 10:00~20:30', phone:'02-468-0605', heroImage:'/assets/salon-hero.webp', salonImages:['/assets/salon-01.webp','/assets/salon-02.webp','/assets/salon-03.webp']},
   designers:[
@@ -29,8 +46,8 @@ export const defaults = {
   ],
   blogLinks:[{title:'네이버 블로그 글을 연결해 주세요', url:'https://blog.naver.com/'}],
   faqs:[
-    {q:'예약은 어떻게 하나요?', a:'네이버예약 또는 전화로 가능합니다.'},
-    {q:'첫 방문 상담 가능한가요?', a:'가능합니다. 원하는 스타일 사진을 가져오시면 상담이 더 정확합니다.'}
+    {cat:'reservation',q:'예약은 어떻게 하나요?', a:'네이버예약 또는 전화로 가능합니다.'},
+    {cat:'reservation',q:'첫 방문 상담 가능한가요?', a:'가능합니다. 원하는 스타일 사진을 가져오시면 상담이 더 정확합니다.'}
   ]
 };
 
@@ -49,8 +66,88 @@ export function imageBox(src, alt){
   return src?`<img src="${esc(src)}" alt="${esc(alt)}">`:'JUNO';
 }
 
-let activeStyle='cut', activeTip='cut';
+let activeStyle='cut', activeTip='cut', activeFaq='all';
 let state=JSON.parse(JSON.stringify(defaults));
+
+function ensureFaqUi(){
+  const faqSection=$('faq');
+  const faqList=$('faqList');
+  if(!faqSection || !faqList) return null;
+
+  const h2=faqSection.querySelector('.head h2');
+  const p=faqSection.querySelector('.head p');
+  if(h2) h2.textContent='Q&A · 자주 묻는 질문';
+  if(p) p.textContent='궁금한 시술을 선택해 빠르게 확인해보세요.';
+
+  if(!$('faqCategoryStyles')){
+    const style=document.createElement('style');
+    style.id='faqCategoryStyles';
+    style.textContent=`
+      .faqTabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+      .faqTabs button{display:inline-flex;align-items:center;gap:6px;border:1px solid #cfc2b5;background:#f8f3ed;padding:9px 13px;font-size:10px;white-space:nowrap}
+      .faqTabs button.on{background:var(--brown);border-color:var(--brown);color:#fff}
+      .faqTabs button small{font-size:9px;opacity:.68;font-weight:700}
+      .faqCategoryCount{margin:0 0 12px;color:var(--muted);font-size:10px}
+      .faqCatTag{display:inline-block;margin-right:8px;padding:3px 7px;border:1px solid #d7c9bc;color:#785d4b;font-size:9px;font-weight:700;vertical-align:1px}
+      .faq #faqList details:first-child{padding-top:4px}
+      .faq #faqList details:last-child{border-bottom:0}
+      .faqEmpty{margin:0;padding:14px 0;color:var(--muted);font-size:12px}
+      @media(max-width:640px){.faqTabs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.faqTabs::-webkit-scrollbar{height:3px}.faqTabs button{flex:0 0 auto}}
+    `;
+    document.head.appendChild(style);
+  }
+
+  let tabs=$('faqCategoryTabs');
+  if(!tabs){
+    tabs=document.createElement('div');
+    tabs.id='faqCategoryTabs';
+    tabs.className='faqTabs';
+    tabs.setAttribute('role','tablist');
+    tabs.setAttribute('aria-label','Q&A 카테고리');
+    faqList.before(tabs);
+
+    const count=document.createElement('p');
+    count.id='faqCategoryCount';
+    count.className='faqCategoryCount';
+    tabs.after(count);
+
+    tabs.addEventListener('click',e=>{
+      const btn=e.target.closest('button[data-faq-cat]');
+      if(!btn) return;
+      activeFaq=btn.dataset.faqCat;
+      renderFaq();
+    });
+  }
+  return tabs;
+}
+
+function renderFaq(){
+  const faqList=$('faqList');
+  if(!faqList) return;
+  const tabs=ensureFaqUi();
+  const items=Array.isArray(state.faqs)?state.faqs:[];
+  const counts={all:items.length};
+  Object.keys(faqCats).forEach(k=>counts[k]=0);
+  items.forEach(x=>{counts[faqCategoryOf(x)]++;});
+
+  if(tabs){
+    const buttons=[['all','전체'],...Object.entries(faqCats)];
+    tabs.innerHTML=buttons.map(([k,label])=>`<button type="button" role="tab" aria-selected="${activeFaq===k?'true':'false'}" data-faq-cat="${k}" class="${activeFaq===k?'on':''}">${label}<small>${counts[k]||0}</small></button>`).join('');
+  }
+
+  const filtered=activeFaq==='all'?items:items.filter(x=>faqCategoryOf(x)===activeFaq);
+  faqList.innerHTML=filtered.map(x=>{
+    const cat=faqCategoryOf(x);
+    const tag=activeFaq==='all'?`<span class="faqCatTag">${esc(faqCats[cat]||'기타')}</span>`:'';
+    return `<details><summary>${tag}${esc(x.q)}</summary><p>${esc(x.a)}</p></details>`;
+  }).join('')||'<p class="faqEmpty">이 카테고리에 등록된 질문이 없습니다.</p>';
+
+  const count=$('faqCategoryCount');
+  if(count){
+    const label=activeFaq==='all'?'전체':(faqCats[activeFaq]||'기타');
+    count.textContent=`${label} 질문 ${filtered.length}개`;
+  }
+}
 
 function render(){
   const site={...defaults.site,...(state.site||{})};
@@ -80,7 +177,7 @@ function render(){
   $('tipList').innerHTML=(state.tips||[]).filter(x=>x.cat===activeTip).map(x=>`<article class="card"><h3>${esc(x.title)}</h3><p>${esc(x.body)}</p><span class="tag">${cats[x.cat]||''}</span></article>`).join('')||'<p>등록된 헤어TIP이 없습니다.</p>';
 
   $('blogLinks').innerHTML=(state.blogLinks||[]).map(x=>`<a target="_blank" rel="noopener" href="${esc(x.url)}">${esc(x.title)}</a>`).join('');
-  $('faqList').innerHTML=(state.faqs||[]).map(x=>`<details><summary>${esc(x.q)}</summary><p>${esc(x.a)}</p></details>`).join('');
+  renderFaq();
 }
 
 ['settings','designers','events','styles','tips','blogLinks','faqs'].forEach(name=>{
