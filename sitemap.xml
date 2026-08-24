@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://junokd02.com/</loc>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://junokd02.com/hair-tips.html</loc>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://junokd02.com/foreign.html</loc>
-    <priority>0.9</priority>
-  </url>
+  <url><loc>https://junokd02.com/</loc><priority>1.0</priority></url>
+  <url><loc>https://junokd02.com/hair-tips.html</loc><priority>0.9</priority></url>
+  <url><loc>https://junokd02.com/foreign.html</loc><priority>0.8</priority></url>
+  <url><loc>https://junokd02.com/kondae-layered-cut.html</loc><priority>0.8</priority></url>
+  <url><loc>https://junokd02.com/kondae-hush-cut.html</loc><priority>0.8</priority></url>
+  <url><loc>https://junokd02.com/kondae-bob-cut.html</loc><priority>0.8</priority></url>
+  <url><loc>https://junokd02.com/kondae-mens-cut.html</loc><priority>0.8</priority></url>
+  <url><loc>https://junokd02.com/kondae-womens-perm.html</loc><priority>0.8</priority></url>
+  <url><loc>https://junokd02.com/kondae-layered-perm.html</loc><priority>0.8</priority></url>
+  <url><loc>https://junokd02.com/kondae-c-curl-perm.html</loc><priority>0.8</priority></url>
+  <url><loc>https://junokd02.com/kondae-mens-perm.html</loc><priority>0.8</priority></url>
+  <url><loc>https://junokd02.com/kondae-hair-color.html</loc><priority>0.8</priority></url>
 </urlset>
