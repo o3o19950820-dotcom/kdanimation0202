@@ -1,5 +1,16 @@
 import { auth } from './firebase.js';
 
+const DESIGNER_SLOTS = [
+  {slug:'park-sangil', path:'/designer-park-sangil.html'},
+  {slug:'seolbin', path:'/designer-seolbin.html'},
+  {slug:'jeongmin', path:'/designer-jeongmin.html'},
+  {slug:'seodan', path:'/designer-seodan.html'},
+  {slug:'hyejin', path:'/designer-hyejin.html'},
+  {slug:'jihyeong', path:'/designer-jihyeong.html'},
+  {slug:'hobin', path:'/designer-hobin.html'},
+  {slug:'baekgeon', path:'/designer-baekgeon.html'}
+];
+
 const DETAIL_FIELDS = [
   ['name', '이름', 'input'],
   ['position', '직급', 'input'],
@@ -108,6 +119,7 @@ function openDetailEditor(index) {
   const item = designers[index];
   if (!item) return;
 
+  const slot = DESIGNER_SLOTS[index] || null;
   const content = $id('adminContent');
   if (!content) return;
 
@@ -115,7 +127,8 @@ function openDetailEditor(index) {
     <div class="adminInquiryHead">
       <div>
         <h3>${esc(item.name || '디자이너')} 상세페이지 편집</h3>
-        <p class="hint">여기서 저장하면 메인 프로필 + 상세 프로필 내용이 함께 바뀝니다.</p>
+        <p class="hint">이름·직급·사진·소개·전문 분야·FAQ까지 한 번에 수정합니다. 이름을 바꿔도 상세페이지 주소는 유지됩니다.</p>
+        ${slot ? `<p class="hint">상세주소: <a href="${slot.path}" target="_blank" rel="noopener">${slot.path}</a></p>` : '<p class="hint">새로 추가한 디자이너는 별도 상세페이지 파일이 필요합니다.</p>'}
       </div>
       <button class="mini" id="dd_back">← 디자이너 목록</button>
     </div>
@@ -147,6 +160,9 @@ function openDetailEditor(index) {
       DETAIL_FIELDS.forEach(([key]) => {
         updated[key] = ($id(`dd_${key}`)?.value || '').trim();
       });
+
+      // 화면 이름과 별개로 상세페이지를 연결하는 내부 고정키.
+      if (!updated.slug && slot?.slug) updated.slug = slot.slug;
 
       const photoFile = $id('dd_photo')?.files?.[0];
       if (photoFile) updated.photo = await compress(photoFile);
