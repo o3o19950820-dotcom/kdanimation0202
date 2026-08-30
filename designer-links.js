@@ -103,3 +103,6 @@
 
 // 가격표 애드온: 기존 사이트 구조는 건드리지 않고 가격표 링크/관리자 탭만 추가합니다.
 import('/price-addon.js').catch(err=>console.error('price addon load error', err));
+
+// 브랜드 포털: 첫 화면만 공식 사이트형 진입 구조로 강화하고 기존 기능은 그대로 유지합니다.
+import('/brand-portal.js?v=20260830-1').catch(err=>console.error('brand portal load error', err));

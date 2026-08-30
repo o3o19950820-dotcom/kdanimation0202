@@ -1,0 +1,52 @@
+준오헤어 건대역2호점 — 브랜드 포털 업로드 파일
+작성일: 2026-08-30
+대상 저장소: o3o19950820-dotcom/kdanimation0202
+업로드 위치: 저장소 최상위(root)
+
+[업로드할 파일]
+1. brand-portal.js        (신규)
+2. brand-portal.css       (신규)
+3. designer-links.js      (기존 파일 덮어쓰기)
+4. robots.txt             (기존 파일 덮어쓰기)
+5. llms.txt               (기존 파일 덮어쓰기)
+
+[절대 건드리지 않아도 되는 파일]
+- index.html
+- app.js
+- firebase.js
+- inquiry.js
+- admin-ui.js
+- api/*
+
+[GitHub에서 올리는 방법]
+1. o3o19950820-dotcom/kdanimation0202 저장소의 main 브랜치로 이동
+2. Add file > Upload files
+3. 이 폴더 안의 위 5개 파일을 모두 드래그
+4. 같은 이름의 designer-links.js / robots.txt / llms.txt는 교체되도록 업로드
+5. Commit changes
+6. Vercel Git 연동 프로젝트가 main을 보고 있다면 자동 배포됨
+
+[적용 후 바뀌는 부분]
+- 상단 헤더: 진한 고동색 + 흰 로고/글씨
+- 첫 화면: 공식 브랜드형 4분할 포털
+  01 예약 & 오시는 길
+  02 디자이너 소개 & 나에게 맞는 디자이너
+  03 스타일 사진
+  04 매장 페이지 바로가기
+- 모바일에서도 2x2 카드 유지
+- 디자이너 섹션에 '나에게 맞는 디자이너 찾기' CTA 추가
+- 오시는 길 섹션에 네이버 예약/전화 CTA 추가
+- 기존 매장소개/이벤트/디자이너/스타일/헤어TIP/외국인/문의/FAQ/관리자/Firebase 기능은 유지
+
+[AI / 검색 보강]
+- 기존 HTML의 HairSalon + FAQ 구조화 데이터는 그대로 유지
+- OAI-SearchBot 허용 유지
+- ChatGPT-User, PerplexityBot 검색 접근 허용 추가
+- GPTBot(학습용 크롤러)은 기존처럼 차단 유지
+- llms.txt에 디자이너 매칭/가격/주요 검색형 가이드 URL 보강
+
+[확인 주소]
+https://junokd02.com/
+https://junokd02.com/robots.txt
+https://junokd02.com/llms.txt
+https://junokd02.com/hair-match.html

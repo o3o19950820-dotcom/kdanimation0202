@@ -1,0 +1,335 @@
+/* JUNO HAIR KONKUK UNIV. 2 — official-style entrance portal
+   Loaded after the existing stylesheet so lower-page content and admin UI remain intact. */
+
+:root{
+  --portal-brown:#2b1712;
+  --portal-brown-2:#351d16;
+  --portal-brown-3:#43261d;
+  --portal-white:#fffdf9;
+  --portal-soft:rgba(255,253,249,.68);
+  --portal-line:rgba(255,255,255,.22);
+}
+
+.brandPortalActive .top{
+  background:rgba(43,23,18,.96);
+  border-bottom:1px solid rgba(255,255,255,.12);
+  color:var(--portal-white);
+}
+.brandPortalActive .logoImage img{height:48px;object-fit:contain}
+.brandPortalActive .links a{color:var(--portal-white);opacity:.72}
+.brandPortalActive .links a::after{background:var(--portal-white)}
+.brandPortalActive .links a:hover{opacity:1}
+.brandPortalActive .adminTopBtn{
+  color:rgba(255,255,255,.58);
+  border-color:rgba(255,255,255,.26);
+}
+.brandPortalActive .adminTopBtn:hover{background:#fff;color:var(--portal-brown)}
+.brandPortalActive .headerReserve{
+  background:transparent;
+  color:#fff;
+  border-color:rgba(255,255,255,.55);
+}
+.brandPortalActive .headerReserve:hover{background:#fff;color:var(--portal-brown)}
+.brandPortalActive .mobileMenuBtn{color:#fff}
+
+.brandPortal{
+  height:auto;
+  min-height:calc(100svh - 88px);
+  background:var(--portal-brown);
+  color:var(--portal-white);
+  display:flex;
+  align-items:center;
+  isolation:isolate;
+}
+.brandPortal .heroRealImage{
+  opacity:.14;
+  filter:saturate(.45) sepia(.18) contrast(.92);
+  transform:scale(1.035);
+}
+.brandPortal .heroOverlay{
+  background:
+    radial-gradient(circle at 78% 24%,rgba(255,255,255,.06),transparent 34%),
+    linear-gradient(110deg,rgba(43,23,18,.98) 0%,rgba(43,23,18,.93) 44%,rgba(43,23,18,.78) 100%);
+}
+.brandPortal .brandPortalGrid{
+  width:min(1320px,calc(100% - 88px));
+  height:auto;
+  min-height:calc(100svh - 88px);
+  padding:72px 0 94px;
+  display:grid;
+  grid-template-columns:minmax(310px,.78fr) minmax(600px,1.22fr);
+  align-items:center;
+  gap:72px;
+}
+.brandPortalIntro{
+  width:auto;
+  color:var(--portal-white);
+  align-self:center;
+}
+.brandPortalIntro .heroKicker{
+  margin:0 0 24px;
+  color:rgba(255,255,255,.58);
+  font-size:9px;
+  letter-spacing:.28em;
+}
+.brandPortalName{
+  margin:0;
+  font-family:var(--serif);
+  font-size:clamp(48px,5vw,76px);
+  line-height:1.02;
+  font-weight:400;
+  letter-spacing:-.065em;
+  color:#fff;
+}
+.brandPortalName span{
+  display:block;
+  margin-top:12px;
+  font-family:var(--sans);
+  font-size:.24em;
+  font-weight:400;
+  letter-spacing:.16em;
+  color:rgba(255,255,255,.62);
+}
+.brandPortalStatement{
+  margin:36px 0 0;
+  font-family:var(--serif);
+  color:#fff;
+  font-size:clamp(25px,2.4vw,38px);
+  font-weight:400;
+  line-height:1.45;
+  letter-spacing:-.045em;
+}
+.brandPortal .lead{
+  width:min(520px,100%);
+  margin-top:22px;
+  color:var(--portal-soft);
+  font-size:12px;
+  line-height:1.95;
+}
+.brandPortalLegacyActions{display:none!important}
+
+.brandPortalMenu{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  border-top:1px solid var(--portal-line);
+  border-left:1px solid var(--portal-line);
+}
+.brandPortalCard{
+  position:relative;
+  min-height:230px;
+  padding:28px 30px 30px;
+  display:flex;
+  flex-direction:column;
+  color:#fff;
+  border-right:1px solid var(--portal-line);
+  border-bottom:1px solid var(--portal-line);
+  background:rgba(255,255,255,.018);
+  overflow:hidden;
+  transition:background .35s var(--ease),transform .35s var(--ease);
+}
+.brandPortalCard::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.12),transparent 52%);
+  opacity:0;
+  transition:opacity .35s var(--ease);
+}
+.brandPortalCard:hover{
+  background:var(--portal-brown-3);
+  transform:translateY(-2px);
+}
+.brandPortalCard:hover::before{opacity:1}
+.brandPortalCardNo{
+  position:relative;
+  z-index:1;
+  font-family:Georgia,serif;
+  font-size:12px;
+  color:rgba(255,255,255,.42);
+}
+.brandPortalCardEn{
+  position:relative;
+  z-index:1;
+  margin:38px 0 9px;
+  font-size:8px;
+  font-weight:500;
+  letter-spacing:.18em;
+  color:rgba(255,255,255,.5);
+}
+.brandPortalCard strong{
+  position:relative;
+  z-index:1;
+  display:block;
+  max-width:245px;
+  font-family:var(--serif);
+  font-size:clamp(20px,1.7vw,27px);
+  font-weight:400;
+  line-height:1.42;
+  letter-spacing:-.045em;
+}
+.brandPortalCard small{
+  position:relative;
+  z-index:1;
+  display:block;
+  margin-top:auto;
+  padding-top:20px;
+  color:rgba(255,255,255,.52);
+  font-size:10px;
+  line-height:1.65;
+}
+.brandPortalArrow{
+  position:absolute;
+  z-index:1;
+  right:25px;
+  top:24px;
+  font-size:18px;
+  font-weight:300;
+  color:rgba(255,255,255,.7);
+  transition:transform .3s var(--ease);
+}
+.brandPortalCard:hover .brandPortalArrow{transform:translate(3px,3px)}
+.brandPortalScroll{
+  position:absolute;
+  z-index:3;
+  left:50%;
+  bottom:24px;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  gap:14px;
+  color:rgba(255,255,255,.44);
+  font-size:8px;
+  letter-spacing:.2em;
+}
+.brandPortalScroll b{font-size:13px;font-weight:300}
+
+.brandPortalActive .quickInfoBar{
+  background:var(--portal-brown-2);
+  color:#fff;
+  border-top:1px solid rgba(255,255,255,.08);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.brandPortalActive .quickInfoBar div{color:rgba(255,255,255,.78)}
+.brandPortalActive .quickInfoBar span{color:rgba(255,255,255,.48)}
+
+.brandDesignerMatch{
+  margin-left:auto;
+  min-width:260px;
+  min-height:76px;
+  padding:17px 20px;
+  border:1px solid rgba(17,17,17,.22);
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  column-gap:20px;
+  transition:.28s var(--ease);
+}
+.brandDesignerMatch span{
+  grid-column:1;
+  font-size:8px;
+  letter-spacing:.18em;
+  color:var(--muted);
+}
+.brandDesignerMatch strong{
+  grid-column:1;
+  margin-top:4px;
+  font-family:var(--serif);
+  font-size:16px;
+  font-weight:500;
+}
+.brandDesignerMatch i{grid-column:2;grid-row:1/3;font-style:normal;font-size:18px}
+.brandDesignerMatch:hover{background:#111;color:#fff;border-color:#111}
+.brandDesignerMatch:hover span{color:rgba(255,255,255,.55)}
+
+.brandContactPanel{
+  margin:30px 0 26px;
+  padding:30px 32px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:30px;
+  background:var(--portal-brown);
+  color:#fff;
+}
+.brandContactPanel>div:first-child>span{
+  font-size:8px;
+  letter-spacing:.2em;
+  color:rgba(255,255,255,.5);
+}
+.brandContactPanel h3{
+  margin:8px 0 10px;
+  font-family:var(--serif);
+  font-size:24px;
+  font-weight:400;
+  letter-spacing:-.04em;
+}
+.brandContactPanel p{margin:0;color:rgba(255,255,255,.62);font-size:11px;line-height:1.8}
+.brandContactActions{display:flex;gap:8px;flex:0 0 auto}
+.brandContactPrimary,.brandContactSecondary{
+  min-height:46px;
+  padding:0 18px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border:1px solid rgba(255,255,255,.55);
+  font-size:10px;
+  transition:.25s var(--ease);
+}
+.brandContactPrimary{background:#fff;color:var(--portal-brown)}
+.brandContactPrimary b{font-size:13px}
+.brandContactPrimary:hover{background:transparent;color:#fff}
+.brandContactSecondary{color:#fff}
+.brandContactSecondary:hover{background:#fff;color:var(--portal-brown)}
+
+@media(max-width:1100px){
+  .brandPortal .brandPortalGrid{
+    grid-template-columns:1fr;
+    gap:44px;
+    padding-top:58px;
+    padding-bottom:92px;
+  }
+  .brandPortalIntro{max-width:720px}
+  .brandPortalStatement{max-width:760px}
+  .brandPortalMenu{width:100%}
+}
+
+@media(max-width:760px){
+  .brandPortalActive .nav{min-height:72px}
+  .brandPortalActive .logoImage{width:142px}
+  .brandPortalActive .logoImage img{height:40px}
+  .brandPortalActive .headerReserve{min-height:38px;padding:0 12px;font-size:9px}
+  .brandPortal{
+    min-height:calc(100svh - 72px);
+  }
+  .brandPortal .brandPortalGrid{
+    width:calc(100% - 36px);
+    min-height:auto;
+    padding:48px 0 86px;
+    gap:34px;
+  }
+  .brandPortalName{font-size:clamp(40px,12vw,58px)}
+  .brandPortalName span{font-size:.25em;margin-top:10px}
+  .brandPortalStatement{margin-top:26px;font-size:clamp(22px,6.4vw,30px)}
+  .brandPortal .lead{font-size:11px;margin-top:16px}
+  .brandPortalMenu{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .brandPortalCard{min-height:168px;padding:18px 17px 18px}
+  .brandPortalCardEn{margin:24px 0 7px;font-size:7px;letter-spacing:.12em}
+  .brandPortalCard strong{font-size:16px;line-height:1.38}
+  .brandPortalCard small{font-size:8px;line-height:1.55;padding-top:13px}
+  .brandPortalArrow{right:15px;top:14px;font-size:14px}
+  .brandPortalScroll{bottom:18px;width:max-content;max-width:86vw}
+  .brandDesignerMatch{margin:18px 0 0;width:100%;min-width:0}
+  .brandContactPanel{align-items:flex-start;flex-direction:column;padding:25px 22px}
+  .brandContactActions{width:100%}
+  .brandContactPrimary,.brandContactSecondary{flex:1}
+}
+
+@media(max-width:410px){
+  .brandPortal .brandPortalGrid{width:calc(100% - 28px)}
+  .brandPortalCard{min-height:158px;padding:16px 14px}
+  .brandPortalCard strong{font-size:14px}
+  .brandPortalCard small{font-size:7.5px}
+  .brandPortalCardEn{font-size:6.5px}
+  .brandContactActions{flex-direction:column}
+}
