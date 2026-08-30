@@ -161,7 +161,6 @@ function openDetailEditor(index) {
         updated[key] = ($id(`dd_${key}`)?.value || '').trim();
       });
 
-      // 화면 이름과 별개로 상세페이지를 연결하는 내부 고정키.
       if (!updated.slug && slot?.slug) updated.slug = slot.slug;
 
       const photoFile = $id('dd_photo')?.files?.[0];
@@ -195,32 +194,46 @@ function injectDetailButtons() {
 
   const editButtons = content.querySelectorAll('button[data-edit="designers"]');
   editButtons.forEach(editBtn => {
-    const row = editBtn.closest('.row');
     const actions = editBtn.parentElement;
-    if (!row || !actions || actions.querySelector('[data-detail-designer]')) return;
+    if (!actions || actions.querySelector('[data-detail-designer]')) return;
 
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'mini';
     btn.textContent = '상세페이지 편집';
     btn.dataset.detailDesigner = editBtn.dataset.i;
-    btn.style.marginLeft = '4px';
-
-    btn.onclick = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      openDetailEditor(Number(btn.dataset.detailDesigner));
-    };
-
+    btn.style.marginRight = '4px';
     actions.insertBefore(btn, editBtn);
   });
 }
 
-const observer = new MutationObserver(() => injectDetailButtons());
-observer.observe(document.body, {childList:true, subtree:true});
+window.__JUNO_OPEN_DESIGNER_DETAIL__ = openDetailEditor;
+window.__JUNO_INJECT_DESIGNER_DETAIL__ = injectDetailButtons;
+window.__JUNO_DESIGNER_DETAIL_LOADED__ = true;
 
-document.addEventListener('click', (e) => {
-  const designerTab = e.target.closest?.('.adminTabs button[data-admin="designer"]');
-  if (designerTab) setTimeout(injectDetailButtons, 0);
-});
+if (!window.__JUNO_DESIGNER_DETAIL_EVENTS_BOUND__) {
+  window.__JUNO_DESIGNER_DETAIL_EVENTS_BOUND__ = true;
+
+  document.addEventListener('click', (e) => {
+    const detailBtn = e.target.closest?.('[data-detail-designer]');
+    if (detailBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      openDetailEditor(Number(detailBtn.dataset.detailDesigner));
+      return;
+    }
+
+    const designerTab = e.target.closest?.('.adminTabs button[data-admin="designer"]');
+    if (designerTab) {
+      setTimeout(injectDetailButtons, 0);
+      setTimeout(injectDetailButtons, 100);
+    }
+  });
+
+  const observer = new MutationObserver(() => injectDetailButtons());
+  observer.observe(document.body, {childList:true, subtree:true});
+}
 
 injectDetailButtons();
+setTimeout(injectDetailButtons, 100);
+setTimeout(injectDetailButtons, 500);

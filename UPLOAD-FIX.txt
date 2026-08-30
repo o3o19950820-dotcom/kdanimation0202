@@ -1,0 +1,42 @@
+준오헤어 디자이너 상세페이지 편집 버튼 수정팩
+
+교체할 파일은 2개입니다.
+1) designer-detail-admin.js
+2) designer-links.js
+
+GitHub 저장소:
+o3o19950820-dotcom/kdanimation0202
+
+방법:
+1. GitHub에서 designer-detail-admin.js 열기
+2. 기존 내용 전체 삭제
+3. 이 폴더의 designer-detail-admin.js 내용으로 전체 교체 후 Commit
+4. designer-links.js도 같은 방식으로 전체 교체 후 Commit
+5. Vercel 재배포
+6. 사이트에서 Ctrl+Shift+R 강력 새로고침
+7. 관리자 로그인 → 디자이너 탭
+
+정상이라면 각 디자이너 줄에:
+[상세페이지 편집] [수정] [삭제]
+형태로 버튼이 보입니다.
+
+상세페이지 편집에서 수정 가능한 항목:
+- 이름
+- 직급
+- 메인 키워드
+- 메인 소개글
+- 전문 분야
+- 추천 고객
+- 상담 포인트
+- 예약 안내
+- 전문 스타일
+- 상담 방식
+- 시술 사례
+- 홈케어 팁
+- FAQ 3개
+- 프로필 사진
+
+중요:
+현재 index.html에는 이미
+<script src="/designer-links.js"></script>
+연결이 들어가 있으므로 index.html은 건드리지 않아도 됩니다.

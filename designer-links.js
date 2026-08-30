@@ -10,13 +10,18 @@
     {slug:'baekgeon', legacyName:'백건', href:'/designer-baekgeon.html'}
   ];
 
-  function loadEditor(){
-    if(document.querySelector('script[data-designer-detail-admin]')) return;
-    const s=document.createElement('script');
-    s.type='module';
-    s.src='/designer-detail-admin.js';
-    s.dataset.designerDetailAdmin='1';
-    document.head.appendChild(s);
+  async function loadEditor(){
+    if(window.__JUNO_DESIGNER_DETAIL_LOADED__){
+      window.__JUNO_INJECT_DESIGNER_DETAIL__?.();
+      return;
+    }
+
+    try{
+      await import('/designer-detail-admin.js?v=20260830-1');
+      window.__JUNO_INJECT_DESIGNER_DETAIL__?.();
+    }catch(err){
+      console.error('designer detail admin load error', err);
+    }
   }
 
   function currentDesigners(){
@@ -27,6 +32,7 @@
     const items=currentDesigners();
     const item=items[index] || {};
     const slug=String(item.slug||'').trim();
+
     if(slug){
       const bySlug=SLOTS.find(x=>x.slug===slug);
       if(bySlug) return bySlug;
@@ -36,7 +42,6 @@
     const byName=SLOTS.find(x=>x.legacyName===name);
     if(byName) return byName;
 
-    // 기존 8명 구성에서 이름만 바꿔도 상세 URL이 끊기지 않도록 안전한 fallback.
     if(items.length===SLOTS.length) return SLOTS[index] || null;
     return null;
   }
@@ -58,6 +63,7 @@
       card.onclick=e=>{
         if(!e.target.closest('a,button,input,select,textarea')) location.href=slot.href;
       };
+
       card.onkeydown=e=>{
         if(e.key==='Enter') location.href=slot.href;
       };
@@ -78,11 +84,21 @@
   function init(){
     loadEditor();
     enhance();
+
     const list=document.querySelector('#designerList');
     if(list) new MutationObserver(enhance).observe(list,{childList:true,subtree:true});
+
+    document.addEventListener('click', e=>{
+      if(e.target.closest?.('.adminTabs button[data-admin="designer"]')){
+        loadEditor();
+        setTimeout(()=>window.__JUNO_INJECT_DESIGNER_DETAIL__?.(), 100);
+      }
+    });
   }
 
-  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
+  document.readyState==='loading'
+    ? document.addEventListener('DOMContentLoaded',init)
+    : init();
 })();
 
 // 가격표 애드온: 기존 사이트 구조는 건드리지 않고 가격표 링크/관리자 탭만 추가합니다.
