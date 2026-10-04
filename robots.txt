@@ -1,21 +1,4 @@
-User-agent: OAI-SearchBot
-Allow: /
-Disallow: /api/
-
-User-agent: ChatGPT-User
-Allow: /
-Disallow: /api/
-
-User-agent: PerplexityBot
-Allow: /
-Disallow: /api/
-
-# Training crawler policy is kept separate from search/discovery crawling.
-User-agent: GPTBot
-Disallow: /
-
 User-agent: *
 Allow: /
-Disallow: /api/
 
 Sitemap: https://junokd02.com/sitemap.xml
