@@ -121,11 +121,11 @@
       <div>
         <span>RESERVATION · LOCATION</span>
         <h3>준오헤어 건대역2호점 예약 & 오시는 길</h3>
-        <p>서울 광진구 능동로 109 2층 · 건대입구역 인근<br>월~토 10:00~20:30 · 02-468-0605</p>
+        <p>서울 광진구 능동로 109 2층 · 건대입구역 인근<br>월~토 10:00~20:30 / 일요일 10:00~18:30 · 02-497-6050</p>
       </div>
       <div class="brandContactActions">
         <a id="brandPortalReserve" class="brandContactPrimary" target="_blank" rel="noopener"><b>N</b> 네이버 예약</a>
-        <a class="brandContactSecondary" href="tel:02-468-0605">전화 문의</a>
+        <a class="brandContactSecondary" href="tel:02-497-6050">전화 문의</a>
       </div>
     `;
     const cards=wrap.querySelector('.grid.cards');

@@ -1107,3 +1107,16 @@ details p{
   .visitor-stat-grid{grid-template-columns:1fr 1fr 1fr}
   .visitor-stat-card{padding:12px 9px}
 }
+
+/* Static service and visitor guide: available before Firebase content loads. */
+.searchGuide{background:#f7f1e9;color:#3a2f29}
+.searchGuide .head p{max-width:760px;font-size:1rem;line-height:1.8}
+.searchGuideGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.searchGuideGrid article{padding:24px;border:1px solid #ded2c6;background:#fffdf9;border-radius:12px;min-width:0}
+.searchGuideGrid h3{margin:0 0 12px;font-size:1.15rem}
+.searchGuideGrid p,.searchGuideGrid li,.searchGuideLinks a{font-size:1rem;line-height:1.8}
+.searchGuideGrid ul{padding-left:20px;margin-bottom:0}
+.searchGuideGrid a{text-decoration:underline;text-underline-offset:4px}
+.searchGuideLinks{display:flex;flex-wrap:wrap;gap:12px 24px;margin-top:24px}
+.searchGuideLinks a{padding:6px 0;text-decoration:underline;text-underline-offset:4px}
+@media(max-width:760px){.searchGuideGrid{grid-template-columns:1fr}}
