@@ -70,6 +70,25 @@
   ]
 }</script>
 <link href="/assets/conversion.css" rel="stylesheet"/><link rel="stylesheet" href="/portfolio-live.css">
+<style id="juno-hair-quiz-promo-css">
+.top .links .navHairQuiz{color:#6b4330;font-weight:800}
+.junoQuizPromo{padding:66px 0;background:linear-gradient(125deg,#f7f0e9,#ede0d1 65%,#e8d4c0);color:#3e3029}
+.junoQuizPromoWrap{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(225px,.8fr);align-items:center;gap:40px}
+.junoQuizKicker{display:block;font-size:12px;letter-spacing:.15em;color:#8d6d5c;font-weight:800;margin-bottom:12px}
+.junoQuizPromo h2{font-size:clamp(25px,3vw,40px);line-height:1.33;margin:0 0 18px;color:#3b2923}
+.junoQuizPromo p{line-height:1.9;max-width:720px;margin:0 0 16px}
+.junoQuizChips{display:flex;flex-wrap:wrap;gap:7px;margin:17px 0 24px}
+.junoQuizChips span{background:#fff8f0;border:1px solid #dbc8b6;border-radius:50px;padding:7px 13px;font-size:12px}
+.junoQuizButton{display:inline-flex;align-items:center;gap:25px;background:#5d4034;color:white!important;border-radius:8px;padding:15px 25px;text-decoration:none;font-weight:750;box-shadow:0 5px 14px #47312520}
+.junoQuizButton:hover{background:#422c23;transform:translateY(-1px)}
+.junoQuizDisclaimer{font-size:12px!important;color:#78695e;margin-top:15px!important;margin-bottom:0!important}
+.junoQuizPromoAside{background:#fffaf4;border:1px solid #dccbbd;box-shadow:0 13px 35px #49302314;border-radius:16px;padding:25px;display:flex;flex-direction:column;gap:12px}
+.junoQuizPromoAside .junoQuizTiny{color:#a07c64;font-size:11px;letter-spacing:.14em;font-weight:800}
+.junoQuizPromoAside p{font-weight:800;margin:0;font-size:18px;line-height:1.5}
+.junoQuizPromoAside span{padding:10px 12px;background:#f7f0e9;border-radius:7px;font-size:14px}
+.junoQuizPromoAside strong{font-size:13px;color:#684c40;margin-top:3px}
+@media(max-width:780px){.junoQuizPromo{padding:43px 0}.junoQuizPromoWrap{grid-template-columns:1fr;gap:24px}.junoQuizPromoAside{padding:19px}.junoQuizPromo h2{font-size:27px}.junoQuizButton{width:100%;justify-content:space-between;box-sizing:border-box}}
+</style>
 </head>
 <body class="juno-has-sticky">
 <!-- Google Tag Manager (noscript) -->
@@ -84,6 +103,7 @@
 <a href="#salon">매장 소개</a>
 <a href="#designers">디자이너</a>
 <a href="#styles">스타일</a>
+<a href="/hair-consultation.html" class="navHairQuiz">헤어 시술 찾기</a>
 <a href="/foreign.html">외국인 안내</a>
 <a href="#tips">이용 안내</a>
 <a href="#faq">FAQ</a>
@@ -106,7 +126,7 @@
 <div class="actions">
 <a class="btn floatBtn" href="https://map.naver.com/p/entry/place/33431131?placePath=%2Fstylist" id="reserveTop" rel="noopener" target="_blank"><span class="naverN">N</span> 네이버 예약</a>
 <a class="btn floatBtn" href="/hair-match.html">나에게 맞는 디자이너 찾기</a>
-<a class="btn floatBtn" href="/hair-consultation.html">나에게 맞는 헤어 시술 찾기</a>
+<a class="btn floatBtn" href="/hair-consultation.html" aria-label="나에게 맞는 헤어 시술 찾기 테스트 시작">✂ 나에게 맞는 헤어 시술 찾기</a>
 </div>
 </div>
 </div>
@@ -115,6 +135,28 @@
 <div><span>⌖</span><b id="siteAddress">서울 광진구 능동로 109 2층</b></div>
 <div><span>◷</span><b id="siteHours">월~토 10:00~20:30</b></div>
 <div><span>✂</span><b>커트 · 펌 · 컬러 · 케어</b></div>
+</section>
+<!-- Hair consultation: prominent discoverable navigation for search visitors -->
+<section class="junoQuizPromo" aria-labelledby="junoQuizPromoHeading">
+  <div class="wrap junoQuizPromoWrap">
+    <div class="junoQuizPromoText">
+      <span class="junoQuizKicker">PERSONAL HAIR GUIDE · 건대입구역</span>
+      <h2 id="junoQuizPromoHeading">나에게 맞는 헤어 시술,<br>1분 체크로 찾아보세요</h2>
+      <p>곱슬·부스스함, 뿌리 볼륨 부족, 뜨는 옆머리, 손상모까지. 내 모발 고민과 손질 습관에 체크하면 건대역2호점에서 상담해 볼 만한 커트·펌·매직·케어 시술을 안내해 드려요.</p>
+      <div class="junoQuizChips"><span>6가지 체크</span><span>결과 바로 확인</span><span>예약 연결</span></div>
+      <a class="junoQuizButton" href="/hair-consultation.html">내 헤어 시술 찾기 <span aria-hidden="true">→</span></a>
+      <p class="junoQuizDisclaimer">※ 참고용 추천이며 실제 시술 가능 여부는 모발·두피 상태 확인 후 결정됩니다.</p>
+    </div>
+    <div class="junoQuizPromoAside" aria-label="헤어 시술 셀프 상담 구성">
+      <div class="junoQuizTiny">STYLE CHECKLIST</div>
+      <p>지금 가장 고민되는 부분은?</p>
+      <span>✓ 곱슬·부스스함</span>
+      <span>✓ 볼륨이 없는 머리</span>
+      <span>✓ 뜨는 옆머리</span>
+      <span>✓ 손상된 모발</span>
+      <strong>내 모발 상태에 맞는 시술 찾기 →</strong>
+    </div>
+  </div>
 </section>
 <section class="section salonIntro reveal" id="salon">
 <div class="wrap">

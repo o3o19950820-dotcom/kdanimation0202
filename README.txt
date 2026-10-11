@@ -1,12 +1,8 @@
-준오헤어 검색페이지 저장 오류 수정
+시술 찾기 메인 노출 강화 패치 (2026-10-11)
 
-1. 이 ZIP 압축을 풉니다.
-2. GitHub Desktop -> Repository -> Show in Explorer 클릭.
-3. ZIP 안 api 폴더의 seo-pages.js를 기존 저장소의 api 폴더에 복사합니다.
-   (기존 api 폴더나 다른 파일은 삭제하지 않습니다.)
-4. GitHub Desktop에서 Summary에 Fix SEO page save API 를 적습니다.
-5. Commit to main -> Push origin.
-6. 운영 Vercel 프로젝트에서 해당 커밋이 Ready가 된 뒤 관리자 로그인 -> 검색페이지 저장 테스트.
+압축 해제 후 index.html 하나만 GitHub 저장소 최상위의 기존 index.html에 덮어쓰세요.
+기존 관리자/Firebase/예약/검색페이지 파일은 수정하지 않습니다.
+변경사항: 상단 메뉴의 헤어 시술 찾기, 메인 배너 버튼 이름 개선, 매장 소개 위 1분 시술 체크 안내 영역.
+독립 페이지 /hair-consultation.html 은 기존에 배포된 상태를 유지합니다.
 
-이 파일은 기존 api/_firebaseAdmin.js를 사용하며 Vercel 환경 변수(FIREBASE_SERVICE_ACCOUNT_JSON 또는 동등 설정, ADMIN_EMAILS)가 기존처럼 설정되어 있어야 합니다.
-중요: Admin 메뉴 내용을 검색봇에 읽히게 하는 동적 렌더링/정적화 기능은 별개 문제입니다.
+반드시 새 Vercel 프로젝트 kdjuno2/kdanimation0202 배포가 Ready 된 뒤 브라우저 강력 새로고침을 하세요.
