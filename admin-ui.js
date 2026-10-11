@@ -183,7 +183,7 @@ function sectionTitle(name){
 }
 
 function manageList(name,arr=[],fields=[],hasImage=false){
-  const help=name==='faqs'?'<p class="hint">카테고리를 선택하면 사이트의 Q&A 탭에 자동으로 분류됩니다. 기존 질문 중 카테고리가 없던 글은 질문 내용에 따라 자동 분류되어 보입니다.</p>':'';
+  const help=name==='styles'?'<p class="hint">스타일 사진 1장을 올리고 담당 디자이너를 선택하면 디자이너 포트폴리오에도 자동 연결됩니다. 이전에 올린 스타일은 수정 버튼으로 디자이너를 선택해 주세요.</p>':name==='faqs'?'<p class="hint">카테고리를 선택하면 사이트의 Q&A 탭에 자동으로 분류됩니다. 기존 질문 중 카테고리가 없던 글은 질문 내용에 따라 자동 분류되어 보입니다.</p>':'';
   return `<h3>${sectionTitle(name)}</h3>${help}<div class="adminGrid"><div class="card"><h4>새로 추가</h4><div class="form" id="addForm">${fields.map(f=>fieldHtml(f,'',name)).join('')}${hasImage?imgInput('newImage'):''}<button class="btn" data-add="${name}">추가</button></div></div><div class="card"><h4>등록 목록</h4>${arr.map((x,i)=>{
     const meta=name==='faqs'?(faqCats[faqCategoryOf(x)]||'기타'):(x.keyword||x.cat||x.url||'');
     return `<div class="row"><div><b>${esc(x.title||x.name||x.q||'항목')}</b><br><span class="hint">${esc(meta)}</span></div><div><button class="mini" data-edit="${name}" data-i="${i}">수정</button> <button class="mini" data-del="${name}" data-i="${i}">삭제</button></div></div>`;
@@ -191,6 +191,10 @@ function manageList(name,arr=[],fields=[],hasImage=false){
 }
 
 function fieldHtml(f,v,name=''){
+  if(f==='designerSlug'){
+    const choices=[['','담당 디자이너 선택 (필수)'],['seodan','서단'],['hyejin','혜진'],['jihyung','지형'],['hobin','호빈'],['baekgun','백건'],['seolbin','설빈'],['jungmin','정민'],['park-sangil','박상일']];
+    return `<label><b>시술 담당 디자이너</b><select id="f_designerSlug">${choices.map(([id,label])=>`<option value="${id}" ${v===id?'selected':''}>${label}</option>`).join('')}</select></label>`;
+  }
   if(f==='cat'){
     const map=name==='faqs'?faqCats:cats;
     const selected=name==='faqs'?(map[v]?v:'other'):v;
@@ -210,7 +214,7 @@ function fieldsFor(name){
   return {
     events:['title','desc','link'],
     designers:['name','position','keyword','intro'],
-    styles:['cat','title','desc'],
+    styles:['cat','title','desc','designerSlug'],
     tips:['cat','title','body'],
     blogLinks:['title','url'],
     faqs:['cat','q','a']
@@ -218,6 +222,7 @@ function fieldsFor(name){
 }
 
 function validateItem(name,item){
+  if(name==='styles' && !item.designerSlug) throw new Error('스타일 사진의 담당 디자이너를 선택해 주세요.');
   if(name==='faqs'){
     if(!faqCats[item.cat]) item.cat='other';
     if(!item.q || !item.a) throw new Error('질문과 답변을 모두 입력해 주세요.');
