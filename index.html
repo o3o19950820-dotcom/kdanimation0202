@@ -50,7 +50,16 @@
       ],
       "priceRange": "₩₩",
       "description": "건대입구역 인근 준오헤어 건대역2호점. 커트, 펌, 컬러, 케어, 스타일 상담 및 외국인 고객 안내.",
-      "telephone": "02-497-6050"
+      "telephone": "02-497-6050",
+      "hasMap": "https://map.naver.com/p/entry/place/33431131",
+      "potentialAction": {
+        "@type": "ReserveAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://map.naver.com/p/entry/place/33431131?placePath=%2Fstylist"
+        },
+        "name": "네이버에서 디자이너 선택 및 예약"
+      }
     },
     {
       "@type": "WebSite",
@@ -81,7 +90,7 @@
 <a href="#contact">오시는 길</a>
 <button class="mini adminTopBtn" id="adminOpen">관리자</button>
 </nav>
-<a class="headerReserve" href="https://map.naver.com/p/search/준오헤어%20건대역2호점" id="reserveHeader" rel="noopener" target="_blank">네이버 예약</a>
+<a class="headerReserve" href="https://map.naver.com/p/entry/place/33431131?placePath=%2Fstylist" id="reserveHeader" rel="noopener" target="_blank">네이버 예약</a>
 <button aria-label="메뉴 열기" class="mobileMenuBtn" id="mobileMenuBtn" type="button">☰</button>
 </div>
 </header>
@@ -95,7 +104,7 @@
 <h1 id="heroTitle">당신에게 가장<br/>자연스러운 스타일을<br/>설계합니다.</h1>
 <p class="lead" id="heroLead">얼굴형, 모발 상태, 라이프스타일까지 세심하게 살펴 가장 편안하고 오래가는 디자인을 제안합니다.</p>
 <div class="actions">
-<a class="btn floatBtn" href="https://map.naver.com/p/search/준오헤어%20건대역2호점" id="reserveTop" rel="noopener" target="_blank"><span class="naverN">N</span> 네이버 예약</a>
+<a class="btn floatBtn" href="https://map.naver.com/p/entry/place/33431131?placePath=%2Fstylist" id="reserveTop" rel="noopener" target="_blank"><span class="naverN">N</span> 네이버 예약</a>
 <a class="btn floatBtn" href="/hair-match.html">나에게 맞는 디자이너 찾기</a>
 </div>
 </div>
@@ -341,6 +350,7 @@
 <script src="/designer-links.js"></script>
 <script>document.getElementById("mobileMenuBtn")?.addEventListener("click",()=>document.querySelector(".top .links")?.classList.toggle("mobileOpen"));document.querySelectorAll(".top .links a").forEach(a=>a.addEventListener("click",()=>document.querySelector(".top .links")?.classList.remove("mobileOpen")));</script>
 <script src="/seo-admin-addon.js" type="module"></script>
-<nav aria-label="모바일 빠른 메뉴" class="juno-sticky"><a href="/styles/">스타일 보기</a><a href="https://map.naver.com/p/search/%EC%A4%80%EC%98%A4%ED%97%A4%EC%96%B4%20%EA%B1%B4%EB%8C%80%EC%97%AD2%ED%98%B8%EC%A0%90" rel="noopener noreferrer" target="_blank">네이버 예약 확인</a></nav><script type="module" src="/portfolio-live.js"></script>
+<nav aria-label="모바일 빠른 메뉴" class="juno-sticky"><a href="/styles/">스타일 보기</a><a href="https://map.naver.com/p/entry/place/33431131?placePath=%2Fstylist" rel="noopener noreferrer" target="_blank">네이버 예약 확인</a></nav><script type="module" src="/portfolio-live.js"></script>
+<script src="/booking-link-fix.js" defer></script>
 </body>
 </html>
