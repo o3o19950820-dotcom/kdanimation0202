@@ -197,7 +197,7 @@ function sectionTitle(name){
 
 function manageList(name,arr=[],fields=[],hasImage=false){
   const help=name==='styles'?'<p class="hint">스타일 사진 1장을 올리고 담당 디자이너를 선택하면 디자이너 포트폴리오에도 자동 연결됩니다. 이전에 올린 스타일은 수정 버튼으로 디자이너를 선택해 주세요.</p>':name==='faqs'?'<p class="hint">카테고리를 선택하면 사이트의 Q&A 탭에 자동으로 분류됩니다. 기존 질문 중 카테고리가 없던 글은 질문 내용에 따라 자동 분류되어 보입니다.</p>':'';
-  return `<h3>${sectionTitle(name)}</h3>${help}<div class="adminGrid"><div class="card"><h4>새로 추가</h4><div class="form" id="addForm">${fields.map(f=>fieldHtml(f,'',name)).join('')}${name==='styles'?fieldHtml('designerSlug','','styles'):''}${hasImage?imgInput('newImage'):''}<button class="btn" data-add="${name}">추가</button></div></div><div class="card"><h4>등록 목록</h4>${arr.map((x,i)=>{
+  return `<h3>${sectionTitle(name)}</h3>${help}<div class="adminGrid"><div class="card"><h4>새로 추가</h4><div class="form" id="addForm">${fields.map(f=>fieldHtml(f,'',name)).join('')}${name==='styles'?fieldHtml('designerSlug','','styles'):''}${hasImage?imgInput('newImage'):''}${name==='styles'?fieldHtml('designerSlug','','styles'):''}${hasImage?imgInput('newImage'):''}${name==='styles'?fieldHtml('designerSlug','','styles'):''}${hasImage?imgInput('newImage'):''}<button class="btn" data-add="${name}">추가</button></div></div><div class="card"><h4>등록 목록</h4>${arr.map((x,i)=>{
     const meta=name==='faqs'?(faqCats[faqCategoryOf(x)]||'기타'):(x.keyword||x.cat||x.url||'');
     return `<div class="row"><div><b>${esc(x.title||x.name||x.q||'항목')}</b><br><span class="hint">${esc(meta)}</span></div><div><button class="mini" data-edit="${name}" data-i="${i}">수정</button> <button class="mini" data-del="${name}" data-i="${i}">삭제</button></div></div>`;
   }).join('')||'<p class="hint">등록된 항목이 없습니다.</p>'}</div></div>`;
